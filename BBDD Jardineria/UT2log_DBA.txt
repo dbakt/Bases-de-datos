@@ -1,0 +1,309 @@
+mysql> /**@author Daniel Barbero Alarcón
+   /*> 
+   /*> Create a database that is a gardening replica named as "<Iniciales_alumno>jardineria," taking into account the following considerations:
+   /*> 
+   /*>     Define the primary keys that can be with the AUTO-INCREMENT option.(Always that is possible)
+   /*>     To establish the behavior SGBD on the rows of the table affected by the disposal or update to those they refer to.
+   /*>     Update every time you are update parent row, related ranks will be updated automatically.
+   /*>     Deleted: when the Father row, related rows are updated to NULL (as long as it is possible)
+   /*> 
+   /*>     After having made a replica of the gardening database with name <Iniciales Nombre del Alumno>jardineria, requested make the following amendments on that database using the same script.*/
+mysql> 
+mysql> 
+mysql> drop database if exists DBAjardineria;
+Query OK, 11 rows affected (0.04 sec)
+
+mysql> create database DBAjardineria;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use DBAjardineria;
+Database changed
+mysql> 
+mysql> /*first we create the table oficinas as it does not depend on another*/
+mysql> drop table if exists oficinas;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table oficinas(
+    -> codigoOficina varchar(10),
+    -> ciudad varchar(30) not null,
+    -> pais varchar(50) not null,
+    -> region varchar(50),
+    -> codigoPostal varchar(10) not null,
+    -> telefono varchar(20)not null,
+    -> lineaDireccion1 varchar(50) not null,
+    -> lineaDireccion2 varchar(50),
+    -> primary key (codigoOficina)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> /*we create the table gamasproductos as it neither depends on another*/
+mysql> drop table if exists gamasproductos;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table gamasproductos(
+    -> gama varchar(50) not null,
+    -> descripcionTexto text,
+    -> descripcionHTML text,
+    -> imagen blob,
+    -> primary key (gama)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> 
+mysql> /*we create the table productos*/
+mysql> drop table if exists productos;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table productos(
+    -> codigoProducto varchar (15) not null,
+    -> nombre varchar(70) not null,
+    -> gama varchar(50) not null,
+    -> dimensiones varchar(25),
+    -> proovedor varchar(50),
+    -> descripcion text,
+    -> cantidadEnStock smallint not null,
+    -> precioVenta decimal (15,2) not null,
+    -> precioProovedor decimal (15,2),
+    -> primary key (codigoProducto),
+    -> foreign key (gama) references gamasproductos (gama) on update cascade
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> 
+mysql> /*we create the table empleados*/
+mysql> drop table if exists empleados;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table empleados(
+    -> codigoEmpleado int not null auto_increment,
+    -> nombre varchar(50)not null,
+    -> apellido1 varchar(50) not null,
+    -> apellido2 varchar(50),
+    -> extension varchar(10) not null,
+    -> email varchar(100) not null,
+    -> codigoOficina varchar(10) not null,
+    -> codigoJefe int,
+    -> puesto varchar(50),
+    -> primary key (codigoEmpleado),
+    -> foreign key(codigoOficina) references oficinas(codigoOficina) on update cascade,
+    -> foreign key (codigoJefe) references empleados(codigoEmpleado) on update cascade on delete set null
+    -> 
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> /*we create the table clientes*/
+mysql> drop table if exists clientes;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table clientes(
+    -> codigoCliente int not null auto_increment,
+    -> nombreCliente varchar(50) not null,
+    -> nombreContacto varchar(30),
+    -> apellidoContacto varchar(30),
+    -> telefono varchar (15) not null,
+    -> fax varchar(15) not null,
+    -> lineaDireccion1 varchar(50) not null,
+    -> lineaDireccion2 varchar(50),
+    -> ciudad varchar(50)not null,
+    -> region varchar(50),
+    -> pais varchar(50),
+    -> codigoPostal varchar(50),
+    -> codigoEmpleadoRepVentas int,
+    -> limiteCredito decimal(15,2),
+    -> primary key (codigoCliente),
+    -> foreign key (codigoEmpleadoRepVentas) references empleados(codigoEmpleado) on update cascade on delete set null
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> /*we create the table pagos*/
+mysql> drop table if exists pagos;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table pagos(
+    -> codigoCliente int not null,
+    -> formaPago varchar(40) not null,
+    -> IDTransaccion varchar (50) not null,
+    -> fechaPago date not null,
+    -> cantidad decimal(15,2) not null,
+    -> primary key (IDTransaccion, codigoCliente),
+    -> foreign key (codigoCliente) references clientes(codigoCliente) on update cascade
+    -> 
+    -> );  
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> /*we create the table pedidos*/
+mysql> drop table if exists pedidos;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table pedidos(
+    -> codigoPedido int not null auto_increment,
+    -> fechaPedido date not null,
+    -> fechaEsperada date not null,
+    -> fechaEntrega date,
+    -> Estado varchar(15) not null,
+    -> comentarios text,
+    -> codigoCliente int not null,
+    -> primary key (codigoPedido),
+    -> foreign key (codigoCliente) references clientes (codigoCliente) on update cascade
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> /*we create the table detallepedidos*/
+mysql> drop table if exists detallepedidos;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table detallepedidos(
+    -> codigoPedido int not null,
+    -> codigoProducto varchar(15) not null,
+    -> cantidad int not null,
+    -> precioUnidad decimal(15,2) not null,
+    -> numeroLinea smallint not null,
+    -> primary key (codigoPedido, codigoProducto),
+    -> foreign key (codigoPedido) references pedidos (codigoPedido) on update cascade,
+    -> foreign key (codigoProducto) references productos (codigoProducto) on update cascade
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> /*
+   /*> For  Clients:
+   /*> 
+   /*> Change the name of the "telefono" attribute to the name "TelefonoMovil".*/
+mysql> alter table clientes  rename column telefono to telefonoMovil;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Add another attribute located behind the "TelefonoMovil" with the name "TelefonoFijo".*/
+mysql> alter table clientes add telefonoFijo varchar(15) after telefonoMovil;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Change the name of the attribute "lineadireccion1" to "direccion1".*/
+mysql> alter table clientes  rename column lineaDireccion1 to direccion1;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Change the name of the attribute "LineaDireccion2" by "Direccion2.*/
+mysql> alter table clientes  rename column lineaDireccion2 to direccion2;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Control that the values allowed for the Pais attribute are USA, Spain, France, Australia and United Kingdom.*/
+mysql> alter table clientes add constraint Const_pais check (pais in ('USA', 'Spain', 'France', 'Australia', 'United Kingdom'));
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Assign default value from the country to "Spain."*/
+mysql> alter table clientes alter pais set default 'Spain';
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Create an index by telephoneMovil due to the number of queries do it on the client's mobile phone.*/
+mysql> /*Dará error porque el indice no existe entonces sintácticamente no nos deja */
+mysql> drop index if exists idx_telefonoMovil on clientes;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'if exists idx_telefonoMovil on clientes' at line 1
+mysql> create index idx_telefonoMovil on clientes (telefonoMovil);
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Create a view with the pais, nombreCliente, telefonoMovil, orderly ascending pais.*/
+mysql> drop view if exists V_clientes;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create view V_clientes as select pais, nombreCliente, telefonoMovil from clientes order by pais asc;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> /*For Employees:
+   /*> 
+   /*> Add the "Telephone" attribute prior to the employee's Extension*/
+mysql> alter table empleados add telefono varchar(20) after apellido2;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Control the values permitted for employee posts are: Director General, Subdirector Marketing, Subdirector Sales, Secretaria, Representante Ventas, Director Oficina.*/
+mysql> alter table empleados add constraint Const_puesto check (puesto in ('Director General', 'Subdirector Marketing', 'Subdirector Ventas', 'Secretaria', 'Representante Ventas', 'Director Oficina' ));
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Create a view with the apellido1, apellido2, nombre, puesto Order by apellido1 upwards.*/
+mysql> drop view if exists V_empleados;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create view V_empleados as select apellido1, apellido2, nombre, puesto from empleados order by apellido1 asc;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> /*For Offices:
+   /*> 
+   /*> Change the name of the attribute of "LineaDireccion1" by "Direccion1"*/
+mysql> alter table oficinas  rename column lineaDireccion1 to direccion1;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Change the name of the attribute of "LineDireccion2" by "Direccion2"*/
+mysql> alter table oficinas  rename column lineaDireccion2 to direccion2;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /*Control countries where the offices are are España, EEUU, Inglaterra, Francia, Australia and Japón.*/
+mysql> alter table oficinas modify pais varchar(50) not null check (pais in ('España', 'EEUU', 'Inglaterra', 'Francia', 'Australia', 'Japón'));
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> /* Create a view with the pais, telefono and direccion1 sorted by pais of form ascending.*/
+mysql> drop view if exists V_oficinas;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create view V_oficinas as select pais, telefono, direccion1 from oficinas order by pais asc;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> /*Rename the table gamasProducts by Gama*/
+mysql> alter table gamasProductos  rename to gama;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> /*CREATION OF USER
+   /*> 
+   /*>     Two users will be created:*/
+mysql> 
+mysql> /*One to manage this database with admin name<Initials Student Name> and password of your choice and password You will have all the permissions on that database*/
+mysql> drop user if exists adminDBA;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create user adminDBA identified by 'adminDBA';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> grant all on DBAjardineria.* to adminDBA;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> /*Another one so that you can only consult the database, with username<Initials Student's Name> and pasword the one you decide.*/
+mysql> drop user if exists usuarioDBA;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create user usuarioDBA identified by 'ususarioDBA';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> grant select on DBAjardineria .* to usuarioDBA;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> notee;

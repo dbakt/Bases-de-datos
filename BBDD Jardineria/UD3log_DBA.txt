@@ -1,0 +1,857 @@
+mysql> use jardineria;
+Database changed
+mysql> /* 1. Obtain the city and telephone number of the EEUU offices.*/
+mysql> select ciudad, telefono from oficinas where pais = 'EEUU';
++---------------+-----------------+
+| ciudad        | telefono        |
++---------------+-----------------+
+| Boston        | +1 215 837 0825 |
+| San Francisco | +1 650 219 4782 |
++---------------+-----------------+
+2 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*2. Obtain the position, name, surname and email of the head of the company.*/
+mysql> select puesto, nombre, apellido1, apellido2, email from empleados where codigojefe is null;
++------------------+--------+-----------+-----------+----------------------+
+| puesto           | nombre | apellido1 | apellido2 | email                |
++------------------+--------+-----------+-----------+----------------------+
+| Director General | Marcos | Maga¤a    | Perez     | marcos@jardineria.es |
++------------------+--------+-----------+-----------+----------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> /*3. Obtain the first and last name and position of those who are not sales representatives.*/
+mysql> select nombre, apellido1, apellido2, puesto from empleados where puesto != 'Representante Ventas';
++----------+------------+-----------+-----------------------+
+| nombre   | apellido1  | apellido2 | puesto                |
++----------+------------+-----------+-----------------------+
+| Marcos   | Maga¤a     | Perez     | Director General      |
+| Ruben    | L¢pez      | Martinez  | Subdirector Marketing |
+| Alberto  | Soria      | Carrasco  | Subdirector Ventas    |
+| Maria    | Sol¡s      | Jerez     | Secretaria            |
+| Carlos   | Soria      | Jimenez   | Director Oficina      |
+| Emmanuel | Maga¤a     | Perez     | Director Oficina      |
+| Francois | Fignon     |           | Director Oficina      |
+| Michael  | Bolton     |           | Director Oficina      |
+| Hilary   | Washington |           | Director Oficina      |
+| Nei      | Nishikori  |           | Director Oficina      |
+| Amy      | Johnson    |           | Director Oficina      |
+| Kevin    | Fallmer    |           | Director Oficina      |
++----------+------------+-----------+-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> /*4. Obtain the number of clients the company has.*/
+mysql> select count(*) as total_clientes from clientes; 
++----------------+
+| total_clientes |
++----------------+
+|             36 |
++----------------+
+1 row in set (0.01 sec)
+
+mysql> 
+mysql> 
+mysql> /*5. Obtain the name of Spanish clients.*/
+mysql> select nombrecliente as clientes_espa¤oles from clientes where pais = 'Spain';
++--------------------------------+
+| clientes_espa¤oles             |
++--------------------------------+
+| Lasas S.A.                     |
+| Beragua                        |
+| Club Golf Puerta del hierro    |
+| Naturagua                      |
+| DaraDistribuciones             |
+| Madrile¤a de riegos            |
+| Lasas S.A.                     |
+| Camunas Jardines S.L.          |
+| Dardena S.A.                   |
+| Jardin de Flores               |
+| Flores Marivi                  |
+| Flowers, S.A                   |
+| Naturajardin                   |
+| Golf S.A.                      |
+| AYMERICH GOLF MANAGEMENT, SL   |
+| Aloha                          |
+| El Prat                        |
+| Sotogrande                     |
+| Vivero Humanes                 |
+| Fuenla City                    |
+| Jardines y Mansiones CACTUS SL |
+| Jardiner¡as Mat¡as SL          |
+| Agrojardin                     |
+| Top Campo                      |
+| Jardineria Sara                |
+| Campohermoso                   |
+| FLORES S.L.                    |
++--------------------------------+
+27 rows in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> /*6. Obtain how many clients the company has in each country.*/
+mysql> select pais, count(*) as clientes_por_pais from clientes
+    -> group by pais;
++----------------+-------------------+
+| pais           | clientes_por_pais |
++----------------+-------------------+
+| USA            |                 4 |
+| Spain          |                27 |
+| France         |                 2 |
+| Australia      |                 2 |
+| United Kingdom |                 1 |
++----------------+-------------------+
+5 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*7. Obtain how many clients the company has in the city of Madrid.*/
+mysql> select ciudad, count(*) as clientes_ciudad from clientes
+    -> where ciudad = 'Madrid';
++--------+-----------------+
+| ciudad | clientes_ciudad |
++--------+-----------------+
+| Madrid |              11 |
++--------+-----------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> /*8. Obtain the employee code and the number of clients each sales representative serves.*/
+mysql> select codigoEmpleadoRepVentas, count(codigoCliente) as clientes_representante from clientes
+    -> group by codigoEmpleadoRepVentas;
++-------------------------+------------------------+
+| codigoEmpleadoRepVentas | clientes_representante |
++-------------------------+------------------------+
+|                       5 |                      5 |
+|                       8 |                      4 |
+|                       9 |                      2 |
+|                      11 |                      5 |
+|                      12 |                      5 |
+|                      16 |                      2 |
+|                      18 |                      2 |
+|                      19 |                      2 |
+|                      22 |                      2 |
+|                      30 |                      5 |
+|                      31 |                      2 |
++-------------------------+------------------------+
+11 rows in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> /*9. Obtain when was the first and last payment made by the client whose code is 3.*/
+mysql> select min(fechaPago) as primer_pago, max(fechaPago) as ultimo_pago from pagos
+    -> where codigoCliente = 3;
++-------------+-------------+
+| primer_pago | ultimo_pago |
++-------------+-------------+
+| 2009-01-16  | 2009-02-19  |
++-------------+-------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> /*10. Obtain the customer code of those customers who made payments in 2008*/
+mysql> select codigoCliente from pagos
+    -> where year (fechaPago) = '2008'
+    -> group by codigoCliente;
++---------------+
+| codigoCliente |
++---------------+
+|             1 |
+|            13 |
+|            14 |
+|            26 |
++---------------+
+4 rows in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> /*11. Obtain the different states through which an order can go.*/
+mysql> select distinct(estado) as diferentesEstadosDeUnPedido from pedidos;
++-----------------------------+
+| diferentesEstadosDeUnPedido |
++-----------------------------+
+| Entregado                   |
+| Rechazado                   |
+| Pendiente                   |
++-----------------------------+
+3 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*12. Obtain the order number, customer code, required date and delivery date of orders that have not been delivered on time.*/
+mysql> select codigoPedido, codigoCliente, fechaEsperada, fechaEntrega from pedidos
+    -> where fechaEntrega > fechaEsperada;
++--------------+---------------+---------------+--------------+
+| codigoPedido | codigoCliente | fechaEsperada | fechaEntrega |
++--------------+---------------+---------------+--------------+
+|            9 |             1 | 2008-12-27    | 2008-12-28   |
+|           13 |             7 | 2009-01-14    | 2009-01-15   |
+|           16 |             7 | 2009-01-07    | 2009-01-15   |
+|           17 |             7 | 2009-01-09    | 2009-01-11   |
+|           18 |             9 | 2009-01-06    | 2009-01-07   |
+|           22 |             9 | 2009-01-11    | 2009-01-13   |
+|           28 |             3 | 2009-02-17    | 2009-02-20   |
+|           31 |            13 | 2008-09-30    | 2008-10-04   |
+|           32 |             4 | 2007-01-19    | 2007-01-27   |
+|           38 |            19 | 2009-03-06    | 2009-03-07   |
+|           39 |            19 | 2009-03-07    | 2009-03-09   |
+|           40 |            19 | 2009-03-10    | 2009-03-13   |
+|           42 |            19 | 2009-03-23    | 2009-03-27   |
+|           43 |            23 | 2009-03-26    | 2009-03-28   |
+|           44 |            23 | 2009-03-27    | 2009-03-30   |
+|           45 |            23 | 2009-03-04    | 2009-03-07   |
+|           46 |            23 | 2009-03-04    | 2009-03-05   |
+|           55 |            14 | 2009-01-10    | 2009-01-11   |
+|           60 |             1 | 2008-12-27    | 2008-12-28   |
+|           68 |             3 | 2009-02-17    | 2009-02-20   |
+|           92 |            27 | 2009-04-30    | 2009-05-03   |
+|           96 |            35 | 2008-04-12    | 2008-04-13   |
+|          103 |            30 | 2009-01-20    | 2009-01-24   |
+|          106 |            30 | 2009-05-15    | 2009-05-20   |
+|          112 |            36 | 2009-04-06    | 2009-05-07   |
+|          113 |            36 | 2008-11-09    | 2009-01-09   |
+|          114 |            36 | 2009-01-29    | 2009-01-31   |
+|          115 |            36 | 2009-01-26    | 2009-02-27   |
+|          123 |            30 | 2009-01-20    | 2009-01-24   |
+|          126 |            30 | 2009-05-15    | 2009-05-20   |
+|          128 |            38 | 2008-12-10    | 2008-12-29   |
++--------------+---------------+---------------+--------------+
+31 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*13. Get how many products exist in each order line.*/
+mysql> select numeroLinea, sum(cantidad) as cantidad_total from detallepedidos
+    -> group by numeroLinea;
++-------------+----------------+
+| numeroLinea | cantidad_total |
++-------------+----------------+
+|           3 |           1410 |
+|           1 |           2413 |
+|           2 |           2624 |
+|           4 |           1016 |
+|           5 |            476 |
+|           6 |            211 |
+|           7 |             23 |
+|           8 |             42 |
++-------------+----------------+
+8 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*14. Obtain a list of the 20 most ordered product codes ordered by quantity ordered.*/
+mysql> select codigoProducto as productos_mas_vendidos, sum(cantidad) as cantidad_total 
+    -> from detallepedidos
+    -> group by codigoProducto
+    -> order by sum(cantidad) desc limit 20;
++------------------------+----------------+
+| productos_mas_vendidos | cantidad_total |
++------------------------+----------------+
+| AR-009                 |            961 |
+| AR-008                 |            455 |
+| FR-17                  |            423 |
+| AR-006                 |            291 |
+| OR-247                 |            279 |
+| OR-157                 |            262 |
+| OR-227                 |            236 |
+| OR-208                 |            221 |
+| 30310                  |            220 |
+| OR-214                 |            212 |
+| FR-57                  |            203 |
+| OR-177                 |            150 |
+| AR-001                 |            135 |
+| FR-11                  |            131 |
+| AR-002                 |            128 |
+| OR-136                 |            127 |
+| FR-48                  |            120 |
+| FR-29                  |            120 |
+| FR-100                 |            114 |
+| FR-94                  |            111 |
++------------------------+----------------+
+20 rows in set (0.00 sec)
+
+mysql>  
+mysql> 
+mysql> /*15. Obtain the order number, customer code, required date and delivery date of orders whose delivery date was at least two days before the required date. (Use addDate function)*/
+mysql> select codigoPedido, codigoCliente, fechaEsperada, fechaEntrega from pedidos
+    -> where fechaEsperada >= (addDate(fechaEntrega, interval 2 day));
++--------------+---------------+---------------+--------------+
+| codigoPedido | codigoCliente | fechaEsperada | fechaEntrega |
++--------------+---------------+---------------+--------------+
+|            2 |             5 | 2007-10-28    | 2007-10-26   |
+|           24 |            14 | 2008-07-31    | 2008-07-25   |
+|           30 |            13 | 2008-09-03    | 2008-08-31   |
+|           36 |            14 | 2008-12-15    | 2008-12-10   |
+|           53 |            13 | 2008-11-15    | 2008-11-09   |
+|           89 |            35 | 2007-12-13    | 2007-12-10   |
+|           91 |            27 | 2009-03-29    | 2009-03-27   |
+|           93 |            27 | 2009-05-30    | 2009-05-17   |
++--------------+---------------+---------------+--------------+
+8 rows in set (0.00 sec)
+
+mysql>  
+mysql> /*16. Obtain the name, surname, office and position of those who are not sales representatives.*/
+mysql> select nombre, apellido1, apellido2, codigoOficina, puesto from empleados
+    -> where puesto != 'Representante Ventas';
++----------+------------+-----------+---------------+-----------------------+
+| nombre   | apellido1  | apellido2 | codigoOficina | puesto                |
++----------+------------+-----------+---------------+-----------------------+
+| Marcos   | Maga¤a     | Perez     | TAL-ES        | Director General      |
+| Ruben    | L¢pez      | Martinez  | TAL-ES        | Subdirector Marketing |
+| Alberto  | Soria      | Carrasco  | TAL-ES        | Subdirector Ventas    |
+| Maria    | Sol¡s      | Jerez     | TAL-ES        | Secretaria            |
+| Carlos   | Soria      | Jimenez   | MAD-ES        | Director Oficina      |
+| Emmanuel | Maga¤a     | Perez     | BCN-ES        | Director Oficina      |
+| Francois | Fignon     |           | PAR-FR        | Director Oficina      |
+| Michael  | Bolton     |           | SFC-USA       | Director Oficina      |
+| Hilary   | Washington |           | BOS-USA       | Director Oficina      |
+| Nei      | Nishikori  |           | TOK-JP        | Director Oficina      |
+| Amy      | Johnson    |           | LON-UK        | Director Oficina      |
+| Kevin    | Fallmer    |           | SYD-AU        | Director Oficina      |
++----------+------------+-----------+---------------+-----------------------+
+12 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*17. Obtain the number of clients assigned to each sales representative.*/
+mysql> select codigoEmpleadoRepVentas, count(codigoCliente) as clientes_asignados from clientes
+    -> group by codigoEmpleadoRepVentas;
++-------------------------+--------------------+
+| codigoEmpleadoRepVentas | clientes_asignados |
++-------------------------+--------------------+
+|                       5 |                  5 |
+|                       8 |                  4 |
+|                       9 |                  2 |
+|                      11 |                  5 |
+|                      12 |                  5 |
+|                      16 |                  2 |
+|                      18 |                  2 |
+|                      19 |                  2 |
+|                      22 |                  2 |
+|                      30 |                  5 |
+|                      31 |                  2 |
++-------------------------+--------------------+
+11 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*18. Obtain a list with the total price of each order.*/
+mysql> select codigoPedido, SUM(preciounidad * cantidad) as precio_total from detallepedidos
+    -> group by codigoPedido;
++--------------+--------------+
+| codigoPedido | precio_total |
++--------------+--------------+
+|            1 |      1567.00 |
+|            2 |      7113.00 |
+|            3 |     10850.00 |
+|            4 |      2624.00 |
+|            8 |      1065.00 |
+|            9 |      2535.00 |
+|           10 |      2920.00 |
+|           11 |       820.00 |
+|           12 |       290.00 |
+|           13 |       738.00 |
+|           14 |       829.00 |
+|           15 |       214.00 |
+|           16 |       234.00 |
+|           17 |       375.00 |
+|           18 |       116.00 |
+|           19 |       333.00 |
+|           20 |       292.00 |
+|           21 |       182.00 |
+|           22 |         6.00 |
+|           23 |      1640.00 |
+|           24 |       287.00 |
+|           25 |      1455.00 |
+|           26 |       675.00 |
+|           27 |       504.00 |
+|           28 |      2052.00 |
+|           29 |      1324.00 |
+|           30 |       711.00 |
+|           31 |       244.00 |
+|           32 |      3089.00 |
+|           33 |     73226.00 |
+|           34 |      1532.00 |
+|           35 |      1718.00 |
+|           36 |       311.00 |
+|           37 |      2284.00 |
+|           38 |        98.00 |
+|           39 |       108.00 |
+|           40 |        12.00 |
+|           41 |        10.00 |
+|           42 |         4.00 |
+|           43 |         9.00 |
+|           44 |         5.00 |
+|           45 |        10.00 |
+|           46 |        84.00 |
+|           47 |       164.00 |
+|           48 |      6398.00 |
+|           50 |      3506.00 |
+|           51 |      7750.00 |
+|           53 |       141.00 |
+|           54 |       669.00 |
+|           55 |      1569.00 |
+|           56 |       377.00 |
+|           57 |       773.00 |
+|           58 |      4775.00 |
+|           74 |      3562.00 |
+|           75 |      1048.00 |
+|           76 |      2223.00 |
+|           77 |       588.00 |
+|           78 |      4660.00 |
+|           79 |       300.00 |
+|           80 |      5773.00 |
+|           81 |       120.00 |
+|           82 |      2176.00 |
+|           83 |       120.00 |
+|           89 |       710.00 |
+|           90 |        41.00 |
+|           91 |      1384.00 |
+|           92 |      2906.00 |
+|           93 |       882.00 |
+|           94 |      5759.00 |
+|           95 |       605.00 |
+|           96 |       660.00 |
+|           97 |       322.00 |
+|           98 |      1024.00 |
+|           99 |      2070.00 |
+|          100 |       800.00 |
+|          101 |       209.00 |
+|          102 |       660.00 |
+|          103 |       304.00 |
+|          104 |      1760.00 |
+|          105 |      1506.00 |
+|          106 |      1077.00 |
+|          107 |      3216.00 |
+|          108 |       660.00 |
+|          109 |       553.00 |
+|          110 |       149.00 |
+|          116 |       264.00 |
+|          117 |       154.00 |
+|          128 |        51.00 |
++--------------+--------------+
+88 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*19. Get how many orders each customer has in each state.*/
+mysql> select codigoCliente, count(codigoPedido) as pedidos, estado from pedidos
+    -> group by codigoCliente, estado
+    -> order by codigoCliente;
++---------------+---------+-----------+
+| codigoCliente | pedidos | estado    |
++---------------+---------+-----------+
+|             1 |       5 | Entregado |
+|             1 |       4 | Pendiente |
+|             1 |       2 | Rechazado |
+|             3 |       5 | Entregado |
+|             3 |       2 | Pendiente |
+|             3 |       2 | Rechazado |
+|             4 |       2 | Entregado |
+|             4 |       1 | Pendiente |
+|             4 |       2 | Rechazado |
+|             5 |       2 | Entregado |
+|             5 |       1 | Pendiente |
+|             5 |       2 | Rechazado |
+|             7 |       4 | Entregado |
+|             7 |       1 | Rechazado |
+|             9 |       2 | Entregado |
+|             9 |       2 | Pendiente |
+|             9 |       1 | Rechazado |
+|            13 |       2 | Entregado |
+|            13 |       1 | Pendiente |
+|            13 |       2 | Rechazado |
+|            14 |       3 | Entregado |
+|            14 |       1 | Pendiente |
+|            14 |       1 | Rechazado |
+|            15 |       3 | Entregado |
+|            15 |       1 | Pendiente |
+|            15 |       1 | Rechazado |
+|            16 |       6 | Entregado |
+|            16 |       2 | Pendiente |
+|            16 |       2 | Rechazado |
+|            19 |       3 | Entregado |
+|            19 |       1 | Pendiente |
+|            19 |       1 | Rechazado |
+|            23 |       2 | Entregado |
+|            23 |       2 | Pendiente |
+|            23 |       1 | Rechazado |
+|            26 |       2 | Entregado |
+|            26 |       2 | Pendiente |
+|            27 |       3 | Entregado |
+|            27 |       2 | Pendiente |
+|            28 |       3 | Entregado |
+|            28 |       1 | Pendiente |
+|            28 |       1 | Rechazado |
+|            30 |       4 | Entregado |
+|            30 |       4 | Pendiente |
+|            30 |       2 | Rechazado |
+|            35 |       4 | Entregado |
+|            35 |       1 | Pendiente |
+|            36 |       2 | Entregado |
+|            36 |       2 | Pendiente |
+|            36 |       1 | Rechazado |
+|            38 |       3 | Entregado |
+|            38 |       2 | Rechazado |
++---------------+---------+-----------+
+52 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*20. Obtain a list with the office, city, region and country code of those offices that are in countries whose name begins with "E".*/
+mysql> select codigoOficina, ciudad, region, pais from oficinas
+    -> where pais like 'E%';
++---------------+----------------------+-------------------+--------+
+| codigoOficina | ciudad               | region            | pais   |
++---------------+----------------------+-------------------+--------+
+| BCN-ES        | Barcelona            | Barcelona         | Espa¤a |
+| BOS-USA       | Boston               | MA                | EEUU   |
+| MAD-ES        | Madrid               | Madrid            | Espa¤a |
+| SFC-USA       | San Francisco        | CA                | EEUU   |
+| TAL-ES        | Talavera de la Reina | Castilla-LaMancha | Espa¤a |
++---------------+----------------------+-------------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*21. Get the name, range, dimensions, quantity in stock and the selling price of the five most expensive products.*/
+mysql> select nombre as 5_productos_mas_caros, gama, dimensiones, cantidadEnStock, precioVenta from productos
+    -> order by precioVenta desc limit 5;
++-----------------------+--------------+-------------+-----------------+-------------+
+| 5_productos_mas_caros | gama         | dimensiones | cantidadEnStock | precioVenta |
++-----------------------+--------------+-------------+-----------------+-------------+
+| Trachycarpus Fortunei | Ornamentales | 250-300     |               2 |      462.00 |
+| Bismarckia Nobilis    | Ornamentales | 240 - 260   |               4 |      266.00 |
+| Bismarckia Nobilis    | Ornamentales | 200 - 220   |               4 |      217.00 |
+| Zamia Furfuracaea     | Ornamentales | 90 - 110    |              15 |      168.00 |
+| Brahea Armata         | Ornamentales | 120 - 140   |             100 |      112.00 |
++-----------------------+--------------+-------------+-----------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*22. Obtain the code and billing for orders over 2000 euros.*/
+mysql> select codigoPedido, sum(cantidad * preciounidad) as facturaci¢n from detallepedidos
+    -> group by codigoPedido
+    -> having sum(cantidad * preciounidad) > 2000;
++--------------+-------------+
+| codigoPedido | facturaci¢n |
++--------------+-------------+
+|            2 |     7113.00 |
+|            3 |    10850.00 |
+|            4 |     2624.00 |
+|            9 |     2535.00 |
+|           10 |     2920.00 |
+|           28 |     2052.00 |
+|           32 |     3089.00 |
+|           33 |    73226.00 |
+|           37 |     2284.00 |
+|           48 |     6398.00 |
+|           50 |     3506.00 |
+|           51 |     7750.00 |
+|           58 |     4775.00 |
+|           74 |     3562.00 |
+|           76 |     2223.00 |
+|           78 |     4660.00 |
+|           80 |     5773.00 |
+|           82 |     2176.00 |
+|           92 |     2906.00 |
+|           94 |     5759.00 |
+|           99 |     2070.00 |
+|          107 |     3216.00 |
++--------------+-------------+
+22 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*23. Get a list of products showing total stock, range and supplier.*/
+mysql> select codigoProducto, nombre, sum(cantidadEnStock) as en_stock, gama, proveedor from productos
+    -> group by codigoProducto, nombre, gama, proveedor;
++----------------+-------------------------------------------------------------+----------+--------------+---------------------------+
+| codigoProducto | nombre                                                      | en_stock | gama         | proveedor                 |
++----------------+-------------------------------------------------------------+----------+--------------+---------------------------+
+| 11679          | Sierra de Poda 400MM                                        |       15 | Herramientas | HiperGarden Tools         |
+| 21636          | Pala                                                        |       15 | Herramientas | HiperGarden Tools         |
+| 22225          | Rastrillo de Jard¡n                                         |       15 | Herramientas | HiperGarden Tools         |
+| 30310          | Azad¢n                                                      |       15 | Herramientas | HiperGarden Tools         |
+| AR-001         | Ajedrea                                                     |      140 | Arom ticas   | Murcia Seasons            |
+| AR-002         | Lav ndula Dentata                                           |      140 | Arom ticas   | Murcia Seasons            |
+| AR-003         | Mejorana                                                    |      140 | Arom ticas   | Murcia Seasons            |
+| AR-004         | Melissa                                                     |      140 | Arom ticas   | Murcia Seasons            |
+| AR-005         | Mentha Sativa                                               |      140 | Arom ticas   | Murcia Seasons            |
+| AR-006         | Petrosilium Hortense (Peregil)                              |      140 | Arom ticas   | Murcia Seasons            |
+| AR-007         | Salvia Mix                                                  |      140 | Arom ticas   | Murcia Seasons            |
+| AR-008         | Thymus Citriodra (Tomillo lim¢n)                            |      140 | Arom ticas   | Murcia Seasons            |
+| AR-009         | Thymus Vulgaris                                             |      140 | Arom ticas   | Murcia Seasons            |
+| AR-010         | Santolina Chamaecyparys                                     |      140 | Arom ticas   | Murcia Seasons            |
+| FR-1           | Expositor C¡tricos Mix                                      |       15 | Frutales     | Frutales Talavera S.A     |
+| FR-10          | Limonero 2 a¤os injerto                                     |       15 | Frutales     | NaranjasValencianas.com   |
+| FR-100         | Nectarina                                                   |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-101         | Nogal                                                       |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-102         | Olea-Olivos                                                 |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-103         | Olea-Olivos                                                 |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-104         | Olea-Olivos                                                 |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-105         | Olea-Olivos                                                 |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-106         | Peral                                                       |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-107         | Peral                                                       |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-108         | Peral                                                       |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-11          | Limonero 30/40                                              |       15 | Frutales     | NaranjasValencianas.com   |
+| FR-12          | Kunquat                                                     |       15 | Frutales     | NaranjasValencianas.com   |
+| FR-13          | Kunquat  EXTRA con FRUTA                                    |       15 | Frutales     | NaranjasValencianas.com   |
+| FR-14          | Calamondin Mini                                             |       15 | Frutales     | Frutales Talavera S.A     |
+| FR-15          | Calamondin Copa                                             |       15 | Frutales     | Frutales Talavera S.A     |
+| FR-16          | Calamondin Copa EXTRA Con FRUTA                             |       15 | Frutales     | Frutales Talavera S.A     |
+| FR-17          | Rosal bajo 1¶¦ -En maceta-inicio brotaci¢n                  |       15 | Frutales     | Frutales Talavera S.A     |
+| FR-18          | ROSAL TREPADOR                                              |      350 | Frutales     | Frutales Talavera S.A     |
+| FR-19          | Camelia Blanco, Chrysler Rojo, Soraya Naranja,              |      350 | Frutales     | NaranjasValencianas.com   |
+| FR-2           | Naranjo -Plant¢n joven 1 a¤o injerto                        |       15 | Frutales     | NaranjasValencianas.com   |
+| FR-20          | Landora Amarillo, Rose Gaujard bicolor blanco-rojo          |      350 | Frutales     | Frutales Talavera S.A     |
+| FR-21          | Kordes Perfect bicolor rojo-amarillo, Roundelay rojo fuerte |      350 | Frutales     | Frutales Talavera S.A     |
+| FR-22          | Pitimini rojo                                               |      350 | Frutales     | Frutales Talavera S.A     |
+| FR-23          | Rosal copa                                                  |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-24          | Albaricoquero Corbato                                       |      400 | Frutales     | Melocotones de Cieza S.A. |
+| FR-25          | Albaricoquero Moniqui                                       |      400 | Frutales     | Melocotones de Cieza S.A. |
+| FR-26          | Albaricoquero Kurrot                                        |      400 | Frutales     | Melocotones de Cieza S.A. |
+| FR-27          | Cerezo Burlat                                               |      400 | Frutales     | Jerte Distribuciones S.L. |
+| FR-28          | Cerezo Picota                                               |      400 | Frutales     | Jerte Distribuciones S.L. |
+| FR-29          | Cerezo Napole¢n                                             |      400 | Frutales     | Jerte Distribuciones S.L. |
+| FR-3           | Naranjo 2 a¤os injerto                                      |       15 | Frutales     | NaranjasValencianas.com   |
+| FR-30          | Ciruelo R. Claudia Verde                                    |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-31          | Ciruelo Santa Rosa                                          |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-32          | Ciruelo Golden Japan                                        |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-33          | Ciruelo Friar                                               |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-34          | Ciruelo Reina C. De Ollins                                  |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-35          | Ciruelo Claudia Negra                                       |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-36          | Granado Mollar de Elche                                     |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-37          | Higuera Napolitana                                          |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-38          | Higuera Verdal                                              |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-39          | Higuera Breva                                               |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-4           | Naranjo calibre 8/10                                        |       15 | Frutales     | NaranjasValencianas.com   |
+| FR-40          | Manzano Starking Delicious                                  |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-41          | Manzano Reineta                                             |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-42          | Manzano Golden Delicious                                    |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-43          | Membrillero Gigante de Wranja                               |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-44          | Melocotonero Spring Crest                                   |      400 | Frutales     | Melocotones de Cieza S.A. |
+| FR-45          | Melocotonero Amarillo de Agosto                             |      400 | Frutales     | Melocotones de Cieza S.A. |
+| FR-46          | Melocotonero Federica                                       |      400 | Frutales     | Melocotones de Cieza S.A. |
+| FR-47          | Melocotonero Paraguayo                                      |      400 | Frutales     | Melocotones de Cieza S.A. |
+| FR-48          | Nogal Com£n                                                 |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-49          | Parra Uva de Mesa                                           |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-5           | Mandarino -Plant¢n joven                                    |       15 | Frutales     | Frutales Talavera S.A     |
+| FR-50          | Peral Castell                                               |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-51          | Peral Williams                                              |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-52          | Peral Conference                                            |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-53          | Peral Blanq. de Aranjuez                                    |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-54          | N¡spero Tanaca                                              |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-55          | Olivo Cipresino                                             |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-56          | Nectarina                                                   |      400 | Frutales     | Frutales Talavera S.A     |
+| FR-57          | Kaki Rojo Brillante                                         |      400 | Frutales     | NaranjasValencianas.com   |
+| FR-58          | Albaricoquero                                               |      200 | Frutales     | Melocotones de Cieza S.A. |
+| FR-59          | Albaricoquero                                               |      200 | Frutales     | Melocotones de Cieza S.A. |
+| FR-6           | Mandarino 2 a¤os injerto                                    |       15 | Frutales     | Frutales Talavera S.A     |
+| FR-60          | Albaricoquero                                               |      200 | Frutales     | Melocotones de Cieza S.A. |
+| FR-61          | Albaricoquero                                               |      200 | Frutales     | Melocotones de Cieza S.A. |
+| FR-62          | Albaricoquero                                               |      200 | Frutales     | Melocotones de Cieza S.A. |
+| FR-63          | Cerezo                                                      |      300 | Frutales     | Jerte Distribuciones S.L. |
+| FR-64          | Cerezo                                                      |       15 | Frutales     | Jerte Distribuciones S.L. |
+| FR-65          | Cerezo                                                      |      200 | Frutales     | Jerte Distribuciones S.L. |
+| FR-66          | Cerezo                                                      |       50 | Frutales     | Jerte Distribuciones S.L. |
+| FR-67          | Cerezo                                                      |       50 | Frutales     | Jerte Distribuciones S.L. |
+| FR-68          | Cerezo                                                      |       50 | Frutales     | Jerte Distribuciones S.L. |
+| FR-69          | Cerezo                                                      |       50 | Frutales     | Jerte Distribuciones S.L. |
+| FR-7           | Mandarino calibre 8/10                                      |       15 | Frutales     | Frutales Talavera S.A     |
+| FR-70          | Ciruelo                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-71          | Ciruelo                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-72          | Ciruelo                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-73          | Granado                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-74          | Granado                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-75          | Granado                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-76          | Granado                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-77          | Granado                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-78          | Higuera                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-79          | Higuera                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-8           | Limonero -Plant¢n joven                                     |       15 | Frutales     | NaranjasValencianas.com   |
+| FR-80          | Higuera                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-81          | Higuera                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-82          | Higuera                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-83          | Higuera                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-84          | Kaki                                                        |       50 | Frutales     | NaranjasValencianas.com   |
+| FR-85          | Kaki                                                        |       50 | Frutales     | NaranjasValencianas.com   |
+| FR-86          | Manzano                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-87          | Manzano                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-88          | Manzano                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-89          | Manzano                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-9           | Limonero calibre 8/10                                       |       15 | Frutales     | NaranjasValencianas.com   |
+| FR-90          | N¡spero                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-91          | N¡spero                                                     |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-92          | Melocotonero                                                |       50 | Frutales     | Melocotones de Cieza S.A. |
+| FR-93          | Melocotonero                                                |       50 | Frutales     | Melocotones de Cieza S.A. |
+| FR-94          | Melocotonero                                                |       50 | Frutales     | Melocotones de Cieza S.A. |
+| FR-95          | Melocotonero                                                |       50 | Frutales     | Melocotones de Cieza S.A. |
+| FR-96          | Membrillero                                                 |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-97          | Membrillero                                                 |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-98          | Membrillero                                                 |       50 | Frutales     | Frutales Talavera S.A     |
+| FR-99          | Membrillero                                                 |       50 | Frutales     | Frutales Talavera S.A     |
+| OR-001         | Arbustos Mix Maceta                                         |       25 | Ornamentales | Valencia Garden Service   |
+| OR-100         | Mimosa Injerto CLASICA Dealbata                             |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-101         | Expositor Mimosa Semilla Mix                                |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-102         | Mimosa Semilla Bayleyana                                    |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-103         | Mimosa Semilla Bayleyana                                    |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-104         | Mimosa Semilla Cyanophylla                                  |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-105         | Mimosa Semilla Espectabilis                                 |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-106         | Mimosa Semilla Longifolia                                   |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-107         | Mimosa Semilla Floribunda 4 estaciones                      |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-108         | Abelia Floribunda                                           |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-109         | Callistemom (Mix)                                           |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-110         | Callistemom (Mix)                                           |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-111         | Corylus Avellana "Contorta"                                 |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-112         | Escallonia (Mix)                                            |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-113         | Evonimus Emerald Gayeti                                     |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-114         | Evonimus Pulchellus                                         |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-115         | Forsytia Intermedia "Lynwood"                               |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-116         | Hibiscus Syriacus  "Diana" -Blanco Puro                     |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-117         | Hibiscus Syriacus  "Helene" -Blanco-C.rojo                  |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-118         | Hibiscus Syriacus "Pink Giant" Rosa                         |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-119         | Laurus Nobilis Arbusto - Ramificado Bajo                    |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-120         | Lonicera Nitida                                             |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-121         | Lonicera Nitida "Maigrum"                                   |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-122         | Lonicera Pileata                                            |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-123         | Philadelphus "Virginal"                                     |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-124         | Prunus pisardii                                             |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-125         | Viburnum Tinus "Eve Price"                                  |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-126         | Weigelia "Bristol Ruby"                                     |      120 | Ornamentales | Viveros EL OASIS          |
+| OR-127         | Camelia japonica                                            |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-128         | Camelia japonica ejemplar                                   |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-129         | Camelia japonica ejemplar                                   |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-130         | Callistemom COPA                                            |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-131         | Leptospermum formado PIRAMIDE                               |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-132         | Leptospermum COPA                                           |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-133         | Nerium oleander-CALIDAD "GARDEN"                            |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-134         | Nerium Oleander Arbusto GRANDE                              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-135         | Nerium oleander COPA  Calibre 6/8                           |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-136         | Nerium oleander ARBOL Calibre 8/10                          |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-137         | ROSAL TREPADOR                                              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-138         | Camelia Blanco, Chrysler Rojo, Soraya Naranja,              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-139         | Landora Amarillo, Rose Gaujard bicolor blanco-rojo          |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-140         | Kordes Perfect bicolor rojo-amarillo, Roundelay rojo fuerte |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-141         | Pitimini rojo                                               |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-142         | Solanum Jazminoide                                          |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-143         | Wisteria Sinensis  azul, rosa, blanca                       |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-144         | Wisteria Sinensis INJERTADAS DECÇ?                          |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-145         | Bougamvillea Sanderiana Tutor                               |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-146         | Bougamvillea Sanderiana Tutor                               |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-147         | Bougamvillea Sanderiana Tutor                               |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-148         | Bougamvillea Sanderiana Espaldera                           |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-149         | Bougamvillea Sanderiana Espaldera                           |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-150         | Bougamvillea roja, naranja                                  |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-151         | Bougamvillea Sanderiana, 3 tut. piramide                    |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-152         | Expositor µrboles clima continental                         |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-153         | Expositor µrboles clima mediterr neo                        |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-154         | Expositor µrboles borde del mar                             |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-155         | Acer Negundo                                                |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-156         | Acer platanoides                                            |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-157         | Acer Pseudoplatanus                                         |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-158         | Brachychiton Acerifolius                                    |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-159         | Brachychiton Discolor                                       |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-160         | Brachychiton Rupestris                                      |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-161         | Cassia Corimbosa                                            |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-162         | Cassia Corimbosa                                            |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-163         | Chitalpa Summer Bells                                       |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-164         | Erytrina Kafra                                              |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-165         | Erytrina Kafra                                              |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-166         | Eucalyptus Citriodora                                       |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-167         | Eucalyptus Ficifolia                                        |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-168         | Eucalyptus Ficifolia                                        |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-169         | Hibiscus Syriacus  Var. Injertadas 1 Tallo                  |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-170         | Lagunaria Patersonii                                        |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-171         | Lagunaria Patersonii                                        |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-172         | Lagunaria patersonii  calibre 8/10                          |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-173         | Morus Alba                                                  |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-174         | Morus Alba  calibre 8/10                                    |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-175         | Platanus Acerifolia                                         |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-176         | Prunus pisardii                                             |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-177         | Robinia Pseudoacacia Casque Rouge                           |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-178         | Salix Babylonica  Pendula                                   |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-179         | Sesbania Punicea                                            |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-180         | Tamarix  Ramosissima Pink Cascade                           |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-181         | Tamarix  Ramosissima Pink Cascade                           |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-182         | Tecoma Stands                                               |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-183         | Tecoma Stands                                               |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-184         | Tipuana Tipu                                                |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-185         | Pleioblastus distichus-Bamb£ enano                          |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-186         | Sasa palmata                                                |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-187         | Sasa palmata                                                |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-188         | Sasa palmata                                                |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-189         | Phylostachys aurea                                          |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-190         | Phylostachys aurea                                          |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-191         | Phylostachys Bambusa Spectabilis                            |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-192         | Phylostachys biseti                                         |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-193         | Phylostachys biseti                                         |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-194         | Pseudosasa japonica (Metake)                                |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-195         | Pseudosasa japonica (Metake)                                |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-196         | Cedrus Deodara                                              |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-197         | Cedrus Deodara "Feeling Blue" Novedad                       |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-198         | Juniperus chinensis "Blue Alps"                             |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-199         | Juniperus Chinensis Stricta                                 |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-200         | Juniperus horizontalis Wiltonii                             |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-201         | Juniperus squamata "Blue Star"                              |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-202         | Juniperus x media Phitzeriana verde                         |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-203         | Pinus Canariensis                                           |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-204         | Pinus Halepensis                                            |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-205         | Pinus Pinea -Pino Pi¤onero                                  |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-206         | Thuja Esmeralda                                             |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-207         | Tuja Occidentalis Woodwardii                                |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-208         | Tuja orientalis "Aurea nana"                                |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-209         | Archontophoenix Cunninghamiana                              |       80 | Ornamentales | Viveros EL OASIS          |
+| OR-210         | Beucarnea Recurvata                                         |        2 | Ornamentales | Viveros EL OASIS          |
+| OR-211         | Beucarnea Recurvata                                         |        5 | Ornamentales | Viveros EL OASIS          |
+| OR-212         | Bismarckia Nobilis                                          |        4 | Ornamentales | Viveros EL OASIS          |
+| OR-213         | Bismarckia Nobilis                                          |        4 | Ornamentales | Viveros EL OASIS          |
+| OR-214         | Brahea Armata                                               |        0 | Ornamentales | Viveros EL OASIS          |
+| OR-215         | Brahea Armata                                               |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-216         | Brahea Edulis                                               |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-217         | Brahea Edulis                                               |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-218         | Butia Capitata                                              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-219         | Butia Capitata                                              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-220         | Butia Capitata                                              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-221         | Butia Capitata                                              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-222         | Butia Capitata                                              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-223         | Chamaerops Humilis                                          |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-224         | Chamaerops Humilis                                          |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-225         | Chamaerops Humilis                                          |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-226         | Chamaerops Humilis                                          |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-227         | Chamaerops Humilis                                          |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-228         | Chamaerops Humilis "Cerifera"                               |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-229         | Chrysalidocarpus Lutescens -ARECA                           |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-230         | Cordyline Australis -DRACAENA                               |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-231         | Cycas Revoluta                                              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-232         | Cycas Revoluta                                              |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-233         | Dracaena Drago                                              |        1 | Ornamentales | Viveros EL OASIS          |
+| OR-234         | Dracaena Drago                                              |        2 | Ornamentales | Viveros EL OASIS          |
+| OR-235         | Dracaena Drago                                              |        2 | Ornamentales | Viveros EL OASIS          |
+| OR-236         | Jubaea Chilensis                                            |      100 | Ornamentales | Viveros EL OASIS          |
+| OR-237         | Livistonia Australis                                        |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-238         | Livistonia Decipiens                                        |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-239         | Livistonia Decipiens                                        |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-240         | Phoenix Canariensis                                         |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-241         | Phoenix Canariensis                                         |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-242         | Rhaphis Excelsa                                             |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-243         | Rhaphis Humilis                                             |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-244         | Sabal Minor                                                 |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-245         | Sabal Minor                                                 |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-246         | Trachycarpus Fortunei                                       |       50 | Ornamentales | Viveros EL OASIS          |
+| OR-247         | Trachycarpus Fortunei                                       |        2 | Ornamentales | Viveros EL OASIS          |
+| OR-248         | Washingtonia Robusta                                        |       15 | Ornamentales | Viveros EL OASIS          |
+| OR-249         | Washingtonia Robusta                                        |       15 | Ornamentales | Viveros EL OASIS          |
+| OR-250         | Yucca Jewel                                                 |       15 | Ornamentales | Viveros EL OASIS          |
+| OR-251         | Zamia Furfuracaea                                           |       15 | Ornamentales | Viveros EL OASIS          |
+| OR-99          | Mimosa DEALBATA Gaulois Astier                              |      100 | Ornamentales | Viveros EL OASIS          |
++----------------+-------------------------------------------------------------+----------+--------------+---------------------------+
+276 rows in set (0.05 sec)
+
+mysql> 
+mysql> /*24. Obtain the order number and customer code of those orders whose order date is the same as the delivery date.*/
+mysql> select codigoCliente, count(codigoPedido) as numero_de_pedidos from pedidos
+    -> where fechaPedido = fechaEntrega
+    -> group by codigoCliente;
++---------------+-------------------+
+| codigoCliente | numero_de_pedidos |
++---------------+-------------------+
+|             9 |                 1 |
++---------------+-------------------+
+1 row in set (0.05 sec)
+
+mysql> notee

@@ -1,0 +1,1007 @@
+mysql> /*usar‚ left join donde no especifique nada para mostrar todos los datos posibles*/
+mysql> 
+mysql> /*1. Get customers whose line of credit is greater than the payments you have made. Use WHERE en JOIN place for joining tables.*/
+mysql> select c.codigoCliente, c.nombreCliente, c.limiteCredito, sum(p.cantidad) as pagos_realizados from clientes c, pagos p
+    -> where c.codigoCliente = p.codigoCliente
+    -> group by 1
+    -> having sum(p.cantidad) < limiteCredito;
++---------------+--------------------------------+---------------+------------------+
+| codigoCliente | nombreCliente                  | limiteCredito | pagos_realizados |
++---------------+--------------------------------+---------------+------------------+
+|             5 | Tendo Garden                   |     600000.00 |         23794.00 |
+|             7 | Beragua                        |      20000.00 |          2390.00 |
+|             9 | Naturagua                      |      32000.00 |           929.00 |
+|            13 | Camunas Jardines S.L.          |      16481.00 |          2246.00 |
+|            14 | Dardena S.A.                   |     321000.00 |          4160.00 |
+|            15 | Jardin de Flores               |      40000.00 |         12081.00 |
+|            19 | Golf S.A.                      |      30000.00 |           232.00 |
+|            23 | Sotogrande                     |      60000.00 |           272.00 |
+|            26 | Jardines y Mansiones CACTUS SL |      76000.00 |         18846.00 |
+|            27 | Jardiner¡as Mat¡as SL          |     100500.00 |         10972.00 |
+|            35 | Tutifruti S.A                  |      10000.00 |          3321.00 |
+|            38 | El Jardin Viviente S.L         |       8000.00 |          1171.00 |
++---------------+--------------------------------+---------------+------------------+
+12 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*2. Get the name of the clients and the name of their representatives along with the city of the office to the one that belongs to the representative. Use WHERE instead of JOIN for the Joining Tables*/
+mysql> select c.nombreCliente, e.nombre, o.ciudad from clientes c, empleados e, oficinas o
+    -> where c.codigoEmpleadoRepVentas = e.codigoEmpleado and e.codigoOficina = o.codigoOficina;
++--------------------------------+-----------------+----------------------+
+| nombreCliente                  | nombre          | ciudad               |
++--------------------------------+-----------------+----------------------+
+| DGPRODUCTIONS GARDEN           | Walter Santiago | San Francisco        |
+| Gardening Associates           | Walter Santiago | San Francisco        |
+| Gerudo Valley                  | Lorena          | Boston               |
+| Tendo Garden                   | Lorena          | Boston               |
+| Lasas S.A.                     | Mariano         | Madrid               |
+| Beragua                        | Emmanuel        | Barcelona            |
+| Club Golf Puerta del hierro    | Emmanuel        | Barcelona            |
+| Naturagua                      | Emmanuel        | Barcelona            |
+| DaraDistribuciones             | Emmanuel        | Barcelona            |
+| Madrile¤a de riegos            | Emmanuel        | Barcelona            |
+| Lasas S.A.                     | Mariano         | Madrid               |
+| Camunas Jardines S.L.          | Mariano         | Madrid               |
+| Dardena S.A.                   | Mariano         | Madrid               |
+| Jardin de Flores               | Julian          | Sydney               |
+| Flores Marivi                  | Felipe          | Talavera de la Reina |
+| Flowers, S.A                   | Felipe          | Talavera de la Reina |
+| Naturajardin                   | Julian          | Sydney               |
+| Golf S.A.                      | Jos‚ Manuel     | Barcelona            |
+| AYMERICH GOLF MANAGEMENT, SL   | Jos‚ Manuel     | Barcelona            |
+| Aloha                          | Jos‚ Manuel     | Barcelona            |
+| El Prat                        | Jos‚ Manuel     | Barcelona            |
+| Sotogrande                     | Jos‚ Manuel     | Barcelona            |
+| Vivero Humanes                 | Julian          | Sydney               |
+| Fuenla City                    | Felipe          | Talavera de la Reina |
+| Jardines y Mansiones CACTUS SL | Lucio           | Madrid               |
+| Jardiner¡as Mat¡as SL          | Lucio           | Madrid               |
+| Agrojardin                     | Julian          | Sydney               |
+| Top Campo                      | Felipe          | Talavera de la Reina |
+| Jardineria Sara                | Felipe          | Talavera de la Reina |
+| Campohermoso                   | Julian          | Sydney               |
+| france telecom                 | Lionel          | Paris                |
+| Mus‚e du Louvre                | Lionel          | Paris                |
+| Tutifruti S.A                  | Mariko          | Sydney               |
+| FLORES S.L.                    | Michael         | San Francisco        |
+| THE MAGIC GARDEN               | Michael         | San Francisco        |
+| El Jardin Viviente S.L         | Mariko          | Sydney               |
++--------------------------------+-----------------+----------------------+
+36 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*3. Get the name of the clients and the name of their representatives along with the city of the office to the one that belongs to the representative. Use JOIN instead of WHERE for joining tables.*/
+mysql> select c.nombreCliente, e.nombre, o.ciudad from clientes c
+    -> join empleados e on c.codigoEmpleadoRepVentas = e.codigoEmpleado
+    -> join oficinas o using (codigoOficina);
++--------------------------------+-----------------+----------------------+
+| nombreCliente                  | nombre          | ciudad               |
++--------------------------------+-----------------+----------------------+
+| DGPRODUCTIONS GARDEN           | Walter Santiago | San Francisco        |
+| Gardening Associates           | Walter Santiago | San Francisco        |
+| Gerudo Valley                  | Lorena          | Boston               |
+| Tendo Garden                   | Lorena          | Boston               |
+| Lasas S.A.                     | Mariano         | Madrid               |
+| Beragua                        | Emmanuel        | Barcelona            |
+| Club Golf Puerta del hierro    | Emmanuel        | Barcelona            |
+| Naturagua                      | Emmanuel        | Barcelona            |
+| DaraDistribuciones             | Emmanuel        | Barcelona            |
+| Madrile¤a de riegos            | Emmanuel        | Barcelona            |
+| Lasas S.A.                     | Mariano         | Madrid               |
+| Camunas Jardines S.L.          | Mariano         | Madrid               |
+| Dardena S.A.                   | Mariano         | Madrid               |
+| Jardin de Flores               | Julian          | Sydney               |
+| Flores Marivi                  | Felipe          | Talavera de la Reina |
+| Flowers, S.A                   | Felipe          | Talavera de la Reina |
+| Naturajardin                   | Julian          | Sydney               |
+| Golf S.A.                      | Jos‚ Manuel     | Barcelona            |
+| AYMERICH GOLF MANAGEMENT, SL   | Jos‚ Manuel     | Barcelona            |
+| Aloha                          | Jos‚ Manuel     | Barcelona            |
+| El Prat                        | Jos‚ Manuel     | Barcelona            |
+| Sotogrande                     | Jos‚ Manuel     | Barcelona            |
+| Vivero Humanes                 | Julian          | Sydney               |
+| Fuenla City                    | Felipe          | Talavera de la Reina |
+| Jardines y Mansiones CACTUS SL | Lucio           | Madrid               |
+| Jardiner¡as Mat¡as SL          | Lucio           | Madrid               |
+| Agrojardin                     | Julian          | Sydney               |
+| Top Campo                      | Felipe          | Talavera de la Reina |
+| Jardineria Sara                | Felipe          | Talavera de la Reina |
+| Campohermoso                   | Julian          | Sydney               |
+| france telecom                 | Lionel          | Paris                |
+| Mus‚e du Louvre                | Lionel          | Paris                |
+| Tutifruti S.A                  | Mariko          | Sydney               |
+| FLORES S.L.                    | Michael         | San Francisco        |
+| THE MAGIC GARDEN               | Michael         | San Francisco        |
+| El Jardin Viviente S.L         | Mariko          | Sydney               |
++--------------------------------+-----------------+----------------------+
+36 rows in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> /*4. Get a list of customers by indicating the customer's name and how many orders they have placed.*/
+mysql> select c.nombreCliente, count(p.codigoPedido) as pedidos_realizados from clientes c
+    -> left join pedidos p using (codigoCliente)
+    -> group by 1;
++--------------------------------+--------------------+
+| nombreCliente                  | pedidos_realizados |
++--------------------------------+--------------------+
+| DGPRODUCTIONS GARDEN           |                 11 |
+| Gardening Associates           |                  9 |
+| Gerudo Valley                  |                  5 |
+| Tendo Garden                   |                  5 |
+| Lasas S.A.                     |                  0 |
+| Beragua                        |                  5 |
+| Club Golf Puerta del hierro    |                  0 |
+| Naturagua                      |                  5 |
+| DaraDistribuciones             |                  0 |
+| Madrile¤a de riegos            |                  0 |
+| Camunas Jardines S.L.          |                  5 |
+| Dardena S.A.                   |                  5 |
+| Jardin de Flores               |                  5 |
+| Flores Marivi                  |                 10 |
+| Flowers, S.A                   |                  0 |
+| Naturajardin                   |                  0 |
+| Golf S.A.                      |                  5 |
+| AYMERICH GOLF MANAGEMENT, SL   |                  0 |
+| Aloha                          |                  0 |
+| El Prat                        |                  0 |
+| Sotogrande                     |                  5 |
+| Vivero Humanes                 |                  0 |
+| Fuenla City                    |                  0 |
+| Jardines y Mansiones CACTUS SL |                  4 |
+| Jardiner¡as Mat¡as SL          |                  5 |
+| Agrojardin                     |                  5 |
+| Top Campo                      |                  0 |
+| Jardineria Sara                |                 10 |
+| Campohermoso                   |                  0 |
+| france telecom                 |                  0 |
+| Mus‚e du Louvre                |                  0 |
+| Tutifruti S.A                  |                  5 |
+| FLORES S.L.                    |                  5 |
+| THE MAGIC GARDEN               |                  0 |
+| El Jardin Viviente S.L         |                  5 |
++--------------------------------+--------------------+
+35 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*5. Get a list of the Names of the customers and the total paid for each of them.*/
+mysql> select c.nombreCliente, sum(p.cantidad) as total_pagado from clientes c 
+    -> left join pagos p using (codigoCliente)
+    -> group by 1;
++--------------------------------+--------------+
+| nombreCliente                  | total_pagado |
++--------------------------------+--------------+
+| DGPRODUCTIONS GARDEN           |      4000.00 |
+| Gardening Associates           |     10926.00 |
+| Gerudo Valley                  |     81849.00 |
+| Tendo Garden                   |     23794.00 |
+| Lasas S.A.                     |         NULL |
+| Beragua                        |      2390.00 |
+| Club Golf Puerta del hierro    |         NULL |
+| Naturagua                      |       929.00 |
+| DaraDistribuciones             |         NULL |
+| Madrile¤a de riegos            |         NULL |
+| Camunas Jardines S.L.          |      2246.00 |
+| Dardena S.A.                   |      4160.00 |
+| Jardin de Flores               |     12081.00 |
+| Flores Marivi                  |      4399.00 |
+| Flowers, S.A                   |         NULL |
+| Naturajardin                   |         NULL |
+| Golf S.A.                      |       232.00 |
+| AYMERICH GOLF MANAGEMENT, SL   |         NULL |
+| Aloha                          |         NULL |
+| El Prat                        |         NULL |
+| Sotogrande                     |       272.00 |
+| Vivero Humanes                 |         NULL |
+| Fuenla City                    |         NULL |
+| Jardines y Mansiones CACTUS SL |     18846.00 |
+| Jardiner¡as Mat¡as SL          |     10972.00 |
+| Agrojardin                     |      8489.00 |
+| Top Campo                      |         NULL |
+| Jardineria Sara                |      7863.00 |
+| Campohermoso                   |         NULL |
+| france telecom                 |         NULL |
+| Mus‚e du Louvre                |         NULL |
+| Tutifruti S.A                  |      3321.00 |
+| FLORES S.L.                    |         NULL |
+| THE MAGIC GARDEN               |         NULL |
+| El Jardin Viviente S.L         |      1171.00 |
++--------------------------------+--------------+
+35 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*6. Get the name and last names of employees as well as the customer name of those employees that represent customers who have made a payment through PayPal.*/
+mysql> select concat_ws(' ', e.nombre, e.apellido1, e.apellido2) as nombre_empleado, c.nombreCliente, p.formaPago from empleados e
+    -> left join clientes c on e.codigoEmpleado = c.codigoEmpleadoRepVentas
+    -> left join pagos p using (codigoCliente)
+    -> where formaPago = 'PayPal'
+    -> group by 1,2;
++--------------------------------+--------------------------------+-----------+
+| nombre_empleado                | nombreCliente                  | formaPago |
++--------------------------------+--------------------------------+-----------+
+| Walter Santiago Sanchez Lopez  | DGPRODUCTIONS GARDEN           | PayPal    |
+| Walter Santiago Sanchez Lopez  | Gardening Associates           | PayPal    |
+| Lorena Paxton                  | Gerudo Valley                  | PayPal    |
+| Emmanuel Maga¤a Perez          | Naturagua                      | PayPal    |
+| Mariano L¢pez Murcia           | Camunas Jardines S.L.          | PayPal    |
+| Mariano L¢pez Murcia           | Dardena S.A.                   | PayPal    |
+| Julian Bellinelli              | Jardin de Flores               | PayPal    |
+| Felipe Rosas Marquez           | Flores Marivi                  | PayPal    |
+| Jos‚ Manuel Martinez De la Osa | Golf S.A.                      | PayPal    |
+| Jos‚ Manuel Martinez De la Osa | Sotogrande                     | PayPal    |
+| Lucio Campoamor Mart¡n         | Jardines y Mansiones CACTUS SL | PayPal    |
+| Lucio Campoamor Mart¡n         | Jardiner¡as Mat¡as SL          | PayPal    |
+| Julian Bellinelli              | Agrojardin                     | PayPal    |
+| Felipe Rosas Marquez           | Jardineria Sara                | PayPal    |
+| Mariko Kishi                   | Tutifruti S.A                  | PayPal    |
+| Mariko Kishi                   | El Jardin Viviente S.L         | PayPal    |
++--------------------------------+--------------------------------+-----------+
+16 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*7. Get How Many Employees It has each office, showing the name of the city where the office is located.*/
+mysql> select o.ciudad as ciudad_oficina, count(e.codigoEmpleado) as numero_de_empleados from oficinas o
+    -> left join empleados e using  (codigoOficina)
+    -> group by 1;
++----------------------+---------------------+
+| ciudad_oficina       | numero_de_empleados |
++----------------------+---------------------+
+| Barcelona            |                   4 |
+| Boston               |                   3 |
+| Londres              |                   3 |
+| Madrid               |                   4 |
+| Paris                |                   3 |
+| San Francisco        |                   2 |
+| Sydney               |                   3 |
+| Talavera de la Reina |                   6 |
+| Tokyo                |                   3 |
++----------------------+---------------------+
+9 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*8. Get the name, last name, office (city), and job title of the employee who does not represent any employee customer.*/
+mysql> select concat_ws(' ', e.nombre, e.apellido1, e.apellido2) as nombre_empleado, o.ciudad as ciudad_oficina, e.puesto from empleados e
+    -> left join oficinas o using (codigoOficina)
+    -> left join clientes c on e.codigoEmpleado = c.codigoEmpleadoRepVentas
+    -> where c.codigoEmpleadoRepVentas is null;
++---------------------------+----------------------+-----------------------+
+| nombre_empleado           | ciudad_oficina       | puesto                |
++---------------------------+----------------------+-----------------------+
+| Marcos Maga¤a Perez       | Talavera de la Reina | Director General      |
+| Ruben L¢pez Martinez      | Talavera de la Reina | Subdirector Marketing |
+| Alberto Soria Carrasco    | Talavera de la Reina | Subdirector Ventas    |
+| Maria Sol¡s Jerez         | Talavera de la Reina | Secretaria            |
+| Juan Carlos Ortiz Serrano | Talavera de la Reina | Representante Ventas  |
+| Carlos Soria Jimenez      | Madrid               | Director Oficina      |
+| Hilario Rodriguez Huertas | Madrid               | Representante Ventas  |
+| David Palma Aceituno      | Barcelona            | Representante Ventas  |
+| Oscar Palma Aceituno      | Barcelona            | Representante Ventas  |
+| Francois Fignon           | Paris                | Director Oficina      |
+| Laurent Serra             | Paris                | Representante Ventas  |
+| Hilary Washington         | Boston               | Director Oficina      |
+| Marcus Paxton             | Boston               | Representante Ventas  |
+| Nei Nishikori             | Tokyo                | Director Oficina      |
+| Narumi Riko               | Tokyo                | Representante Ventas  |
+| Takuma Nomura             | Tokyo                | Representante Ventas  |
+| Amy Johnson               | Londres              | Director Oficina      |
+| Larry Westfalls           | Londres              | Representante Ventas  |
+| John Walton               | Londres              | Representante Ventas  |
+| Kevin Fallmer             | Sydney               | Director Oficina      |
++---------------------------+----------------------+-----------------------+
+20 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*9. Get a list of the customers and the transaction ID of those customers who made some payment in 2007.*/
+mysql> select c.codigoCliente, c.nombreCliente, p.idTransaccion from clientes c 
+    -> left join pagos p using (codigoCliente)
+    -> where year (p.fechaPago) = '2007';
++---------------+---------------+---------------+
+| codigoCliente | nombreCliente | idTransaccion |
++---------------+---------------+---------------+
+|             4 | Gerudo Valley | ak-std-000006 |
+|             4 | Gerudo Valley | ak-std-000007 |
+|             4 | Gerudo Valley | ak-std-000008 |
+|             4 | Gerudo Valley | ak-std-000009 |
+|             4 | Gerudo Valley | ak-std-000010 |
+|            35 | Tutifruti S.A | ak-std-000025 |
++---------------+---------------+---------------+
+6 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*10. Get the names of the as well as the names and surnames of their representatives customers who haven't made payments.*/
+mysql> select c.nombreCliente, concat_ws(' ', e.nombre, e.apellido1, e.apellido2) as nombre_empleado from clientes c
+    -> left join empleados e on c.codigoEmpleadoRepVentas = e.codigoEmpleado
+    -> left join pagos p using (codigoCliente)
+    -> where p.codigoCliente is null;
++------------------------------+--------------------------------+
+| nombreCliente                | nombre_empleado                |
++------------------------------+--------------------------------+
+| Lasas S.A.                   | Mariano L¢pez Murcia           |
+| Club Golf Puerta del hierro  | Emmanuel Maga¤a Perez          |
+| DaraDistribuciones           | Emmanuel Maga¤a Perez          |
+| Madrile¤a de riegos          | Emmanuel Maga¤a Perez          |
+| Lasas S.A.                   | Mariano L¢pez Murcia           |
+| Flowers, S.A                 | Felipe Rosas Marquez           |
+| Naturajardin                 | Julian Bellinelli              |
+| AYMERICH GOLF MANAGEMENT, SL | Jos‚ Manuel Martinez De la Osa |
+| Aloha                        | Jos‚ Manuel Martinez De la Osa |
+| El Prat                      | Jos‚ Manuel Martinez De la Osa |
+| Vivero Humanes               | Julian Bellinelli              |
+| Fuenla City                  | Felipe Rosas Marquez           |
+| Top Campo                    | Felipe Rosas Marquez           |
+| Campohermoso                 | Julian Bellinelli              |
+| france telecom               | Lionel Narvaez                 |
+| Mus‚e du Louvre              | Lionel Narvaez                 |
+| FLORES S.L.                  | Michael Bolton                 |
+| THE MAGIC GARDEN             | Michael Bolton                 |
++------------------------------+--------------------------------+
+18 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*usando una subconsulta*/
+mysql> select c.nombreCliente, concat_ws(' ', e.nombre, e.apellido1, e.apellido2) as nombre_empleado from clientes c
+    -> left join empleados e on c.codigoEmpleadoRepVentas = e.codigoEmpleado
+    -> left join pagos p using (codigoCliente)
+    -> where c.codigoCliente not in (select codigoCliente from pagos);
++------------------------------+--------------------------------+
+| nombreCliente                | nombre_empleado                |
++------------------------------+--------------------------------+
+| Lasas S.A.                   | Mariano L¢pez Murcia           |
+| Club Golf Puerta del hierro  | Emmanuel Maga¤a Perez          |
+| DaraDistribuciones           | Emmanuel Maga¤a Perez          |
+| Madrile¤a de riegos          | Emmanuel Maga¤a Perez          |
+| Lasas S.A.                   | Mariano L¢pez Murcia           |
+| Flowers, S.A                 | Felipe Rosas Marquez           |
+| Naturajardin                 | Julian Bellinelli              |
+| AYMERICH GOLF MANAGEMENT, SL | Jos‚ Manuel Martinez De la Osa |
+| Aloha                        | Jos‚ Manuel Martinez De la Osa |
+| El Prat                      | Jos‚ Manuel Martinez De la Osa |
+| Vivero Humanes               | Julian Bellinelli              |
+| Fuenla City                  | Felipe Rosas Marquez           |
+| Top Campo                    | Felipe Rosas Marquez           |
+| Campohermoso                 | Julian Bellinelli              |
+| france telecom               | Lionel Narvaez                 |
+| Mus‚e du Louvre              | Lionel Narvaez                 |
+| FLORES S.L.                  | Michael Bolton                 |
+| THE MAGIC GARDEN             | Michael Bolton                 |
++------------------------------+--------------------------------+
+18 rows in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> /*11. Get the Name, range, and text description of products that have never been ordered.*/
+mysql> select p.nombre, p.gama, substr(p.descripcion, 1, 20) from productos p
+    -> left join detallepedidos dp using (codigoProducto)
+    -> where dp.codigoProducto is null;
++-------------------------------------------------------------+--------------+------------------------------+
+| nombre                                                      | gama         | substr(p.descripcion, 1, 20) |
++-------------------------------------------------------------+--------------+------------------------------+
+| Olea-Olivos                                                 | Frutales     | Existen dos hip¢tesi         |
+| Calamondin Mini                                             | Frutales     | Se trata de un peque         |
+| Camelia Blanco, Chrysler Rojo, Soraya Naranja,              | Frutales     |                              |
+| Landora Amarillo, Rose Gaujard bicolor blanco-rojo          | Frutales     |                              |
+| Kordes Perfect bicolor rojo-amarillo, Roundelay rojo fuerte | Frutales     |                              |
+| Albaricoquero Corbato                                       | Frutales     |  rbol que puede pasa         |
+| Albaricoquero Moniqui                                       | Frutales     |  rbol que puede pasa         |
+| Albaricoquero Kurrot                                        | Frutales     |  rbol que puede pasa         |
+| Cerezo Burlat                                               | Frutales     | Las principales espe         |
+| Cerezo Picota                                               | Frutales     | Las principales espe         |
+| Ciruelo R. Claudia Verde                                    | Frutales     |  rbol de tama¤o medi         |
+| Ciruelo Golden Japan                                        | Frutales     |  rbol de tama¤o medi         |
+| Ciruelo Claudia Negra                                       | Frutales     |  rbol de tama¤o medi         |
+| Higuera Verdal                                              | Frutales     | La higuera (Ficus ca         |
+| Higuera Breva                                               | Frutales     | La higuera (Ficus ca         |
+| Melocotonero Spring Crest                                   | Frutales     | µrbol caducifolio de         |
+| Melocotonero Federica                                       | Frutales     | µrbol caducifolio de         |
+| Parra Uva de Mesa                                           | Frutales     |                              |
+| Mandarino -Plant¢n joven                                    | Frutales     |                              |
+| Peral Castell                                               | Frutales     | µrbol piramidal, red         |
+| Peral Williams                                              | Frutales     | µrbol piramidal, red         |
+| Peral Conference                                            | Frutales     | µrbol piramidal, red         |
+| Olivo Cipresino                                             | Frutales     | Existen dos hip¢tesi         |
+| Albaricoquero                                               | Frutales     |  rbol que puede pasa         |
+| Albaricoquero                                               | Frutales     |  rbol que puede pasa         |
+| Albaricoquero                                               | Frutales     |  rbol que puede pasa         |
+| Cerezo                                                      | Frutales     | Las principales espe         |
+| Cerezo                                                      | Frutales     | Las principales espe         |
+| Cerezo                                                      | Frutales     | Las principales espe         |
+| Ciruelo                                                     | Frutales     |  rbol de tama¤o medi         |
+| Granado                                                     | Frutales     | peque¤o  rbol caduci         |
+| Granado                                                     | Frutales     | peque¤o  rbol caduci         |
+| Granado                                                     | Frutales     | peque¤o  rbol caduci         |
+| Higuera                                                     | Frutales     | La higuera (Ficus ca         |
+| Manzano                                                     | Frutales     | alcanza como m ximo          |
+| Melocotonero                                                | Frutales     | µrbol caducifolio de         |
+| Melocotonero                                                | Frutales     | µrbol caducifolio de         |
+| Melocotonero                                                | Frutales     | µrbol caducifolio de         |
+| Membrillero                                                 | Frutales     | arbolito caducifolio         |
+| Membrillero                                                 | Frutales     | arbolito caducifolio         |
+| Membrillero                                                 | Frutales     | arbolito caducifolio         |
+| Membrillero                                                 | Frutales     | arbolito caducifolio         |
+| Arbustos Mix Maceta                                         | Ornamentales |                              |
+| Mimosa Injerto CLASICA Dealbata                             | Ornamentales | Acacia dealbata. Nom         |
+| Mimosa Semilla Bayleyana                                    | Ornamentales | Acacia dealbata. Nom         |
+| Mimosa Semilla Espectabilis                                 | Ornamentales | Acacia dealbata. Nom         |
+| Mimosa Semilla Longifolia                                   | Ornamentales | Acacia dealbata. Nom         |
+| Mimosa Semilla Floribunda 4 estaciones                      | Ornamentales | Acacia dealbata. Nom         |
+| Abelia Floribunda                                           | Ornamentales |                              |
+| Callistemom (Mix)                                           | Ornamentales | Limpitatubos. arboli         |
+| Callistemom (Mix)                                           | Ornamentales | Limpitatubos. arboli         |
+| Corylus Avellana "Contorta"                                 | Ornamentales |                              |
+| Escallonia (Mix)                                            | Ornamentales |                              |
+| Evonimus Emerald Gayeti                                     | Ornamentales |                              |
+| Evonimus Pulchellus                                         | Ornamentales |                              |
+| Hibiscus Syriacus  "Helene" -Blanco-C.rojo                  | Ornamentales | Por su capacidad de          |
+| Hibiscus Syriacus "Pink Giant" Rosa                         | Ornamentales | Por su capacidad de          |
+| Lonicera Nitida "Maigrum"                                   | Ornamentales |                              |
+| Prunus pisardii                                             | Ornamentales |                              |
+| Weigelia "Bristol Ruby"                                     | Ornamentales |                              |
+| Leptospermum formado PIRAMIDE                               | Ornamentales |                              |
+| Leptospermum COPA                                           | Ornamentales |                              |
+| Nerium oleander-CALIDAD "GARDEN"                            | Ornamentales |                              |
+| Nerium Oleander Arbusto GRANDE                              | Ornamentales |                              |
+| Nerium oleander COPA  Calibre 6/8                           | Ornamentales |                              |
+| ROSAL TREPADOR                                              | Ornamentales |                              |
+| Camelia Blanco, Chrysler Rojo, Soraya Naranja,              | Ornamentales |                              |
+| Solanum Jazminoide                                          | Ornamentales |                              |
+| Wisteria Sinensis  azul, rosa, blanca                       | Ornamentales |                              |
+| Wisteria Sinensis INJERTADAS DECÇ?                          | Ornamentales |                              |
+| Bougamvillea Sanderiana Tutor                               | Ornamentales |                              |
+| Bougamvillea Sanderiana Espaldera                           | Ornamentales |                              |
+| Bougamvillea Sanderiana Espaldera                           | Ornamentales |                              |
+| Bougamvillea Sanderiana, 3 tut. piramide                    | Ornamentales |                              |
+| Expositor µrboles clima mediterr neo                        | Ornamentales |                              |
+| Expositor µrboles borde del mar                             | Ornamentales |                              |
+| Brachychiton Acerifolius                                    | Ornamentales |                              |
+| Cassia Corimbosa                                            | Ornamentales |                              |
+| Cassia Corimbosa                                            | Ornamentales |                              |
+| Chitalpa Summer Bells                                       | Ornamentales |                              |
+| Erytrina Kafra                                              | Ornamentales |                              |
+| Eucalyptus Citriodora                                       | Ornamentales |                              |
+| Eucalyptus Ficifolia                                        | Ornamentales |                              |
+| Hibiscus Syriacus  Var. Injertadas 1 Tallo                  | Ornamentales |                              |
+| Lagunaria Patersonii                                        | Ornamentales |                              |
+| Lagunaria Patersonii                                        | Ornamentales |                              |
+| Morus Alba                                                  | Ornamentales |                              |
+| Platanus Acerifolia                                         | Ornamentales |                              |
+| Salix Babylonica  Pendula                                   | Ornamentales |                              |
+| Tamarix  Ramosissima Pink Cascade                           | Ornamentales |                              |
+| Tecoma Stands                                               | Ornamentales |                              |
+| Tecoma Stands                                               | Ornamentales |                              |
+| Tipuana Tipu                                                | Ornamentales |                              |
+| Pleioblastus distichus-Bamb£ enano                          | Ornamentales |                              |
+| Sasa palmata                                                | Ornamentales |                              |
+| Phylostachys aurea                                          | Ornamentales |                              |
+| Phylostachys aurea                                          | Ornamentales |                              |
+| Phylostachys Bambusa Spectabilis                            | Ornamentales |                              |
+| Phylostachys biseti                                         | Ornamentales |                              |
+| Pseudosasa japonica (Metake)                                | Ornamentales |                              |
+| Pseudosasa japonica (Metake)                                | Ornamentales |                              |
+| Cedrus Deodara "Feeling Blue" Novedad                       | Ornamentales |                              |
+| Juniperus chinensis "Blue Alps"                             | Ornamentales |                              |
+| Juniperus Chinensis Stricta                                 | Ornamentales |                              |
+| Juniperus squamata "Blue Star"                              | Ornamentales |                              |
+| Juniperus x media Phitzeriana verde                         | Ornamentales |                              |
+| Pinus Halepensis                                            | Ornamentales |                              |
+| Pinus Pinea -Pino Pi¤onero                                  | Ornamentales |                              |
+| Thuja Esmeralda                                             | Ornamentales |                              |
+| Bismarckia Nobilis                                          | Ornamentales |                              |
+| Brahea Armata                                               | Ornamentales |                              |
+| Brahea Edulis                                               | Ornamentales |                              |
+| Butia Capitata                                              | Ornamentales |                              |
+| Butia Capitata                                              | Ornamentales |                              |
+| Butia Capitata                                              | Ornamentales |                              |
+| Chamaerops Humilis                                          | Ornamentales |                              |
+| Chamaerops Humilis                                          | Ornamentales |                              |
+| Chamaerops Humilis "Cerifera"                               | Ornamentales |                              |
+| Chrysalidocarpus Lutescens -ARECA                           | Ornamentales |                              |
+| Cordyline Australis -DRACAENA                               | Ornamentales |                              |
+| Cycas Revoluta                                              | Ornamentales |                              |
+| Cycas Revoluta                                              | Ornamentales |                              |
+| Dracaena Drago                                              | Ornamentales |                              |
+| Dracaena Drago                                              | Ornamentales |                              |
+| Livistonia Decipiens                                        | Ornamentales |                              |
+| Livistonia Decipiens                                        | Ornamentales |                              |
+| Rhaphis Excelsa                                             | Ornamentales |                              |
+| Sabal Minor                                                 | Ornamentales |                              |
+| Sabal Minor                                                 | Ornamentales |                              |
+| Trachycarpus Fortunei                                       | Ornamentales |                              |
+| Washingtonia Robusta                                        | Ornamentales |                              |
+| Zamia Furfuracaea                                           | Ornamentales |                              |
++-------------------------------------------------------------+--------------+------------------------------+
+132 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*con subconsulta*/
+mysql> select p.nombre, p.gama, substr(p.descripcion, 1, 20) from productos p
+    -> left join detallepedidos dp using (codigoProducto)
+    -> where p.codigoProducto not in (select codigoProducto from detallepedidos);
++-------------------------------------------------------------+--------------+------------------------------+
+| nombre                                                      | gama         | substr(p.descripcion, 1, 20) |
++-------------------------------------------------------------+--------------+------------------------------+
+| Olea-Olivos                                                 | Frutales     | Existen dos hip¢tesi         |
+| Calamondin Mini                                             | Frutales     | Se trata de un peque         |
+| Camelia Blanco, Chrysler Rojo, Soraya Naranja,              | Frutales     |                              |
+| Landora Amarillo, Rose Gaujard bicolor blanco-rojo          | Frutales     |                              |
+| Kordes Perfect bicolor rojo-amarillo, Roundelay rojo fuerte | Frutales     |                              |
+| Albaricoquero Corbato                                       | Frutales     |  rbol que puede pasa         |
+| Albaricoquero Moniqui                                       | Frutales     |  rbol que puede pasa         |
+| Albaricoquero Kurrot                                        | Frutales     |  rbol que puede pasa         |
+| Cerezo Burlat                                               | Frutales     | Las principales espe         |
+| Cerezo Picota                                               | Frutales     | Las principales espe         |
+| Ciruelo R. Claudia Verde                                    | Frutales     |  rbol de tama¤o medi         |
+| Ciruelo Golden Japan                                        | Frutales     |  rbol de tama¤o medi         |
+| Ciruelo Claudia Negra                                       | Frutales     |  rbol de tama¤o medi         |
+| Higuera Verdal                                              | Frutales     | La higuera (Ficus ca         |
+| Higuera Breva                                               | Frutales     | La higuera (Ficus ca         |
+| Melocotonero Spring Crest                                   | Frutales     | µrbol caducifolio de         |
+| Melocotonero Federica                                       | Frutales     | µrbol caducifolio de         |
+| Parra Uva de Mesa                                           | Frutales     |                              |
+| Mandarino -Plant¢n joven                                    | Frutales     |                              |
+| Peral Castell                                               | Frutales     | µrbol piramidal, red         |
+| Peral Williams                                              | Frutales     | µrbol piramidal, red         |
+| Peral Conference                                            | Frutales     | µrbol piramidal, red         |
+| Olivo Cipresino                                             | Frutales     | Existen dos hip¢tesi         |
+| Albaricoquero                                               | Frutales     |  rbol que puede pasa         |
+| Albaricoquero                                               | Frutales     |  rbol que puede pasa         |
+| Albaricoquero                                               | Frutales     |  rbol que puede pasa         |
+| Cerezo                                                      | Frutales     | Las principales espe         |
+| Cerezo                                                      | Frutales     | Las principales espe         |
+| Cerezo                                                      | Frutales     | Las principales espe         |
+| Ciruelo                                                     | Frutales     |  rbol de tama¤o medi         |
+| Granado                                                     | Frutales     | peque¤o  rbol caduci         |
+| Granado                                                     | Frutales     | peque¤o  rbol caduci         |
+| Granado                                                     | Frutales     | peque¤o  rbol caduci         |
+| Higuera                                                     | Frutales     | La higuera (Ficus ca         |
+| Manzano                                                     | Frutales     | alcanza como m ximo          |
+| Melocotonero                                                | Frutales     | µrbol caducifolio de         |
+| Melocotonero                                                | Frutales     | µrbol caducifolio de         |
+| Melocotonero                                                | Frutales     | µrbol caducifolio de         |
+| Membrillero                                                 | Frutales     | arbolito caducifolio         |
+| Membrillero                                                 | Frutales     | arbolito caducifolio         |
+| Membrillero                                                 | Frutales     | arbolito caducifolio         |
+| Membrillero                                                 | Frutales     | arbolito caducifolio         |
+| Arbustos Mix Maceta                                         | Ornamentales |                              |
+| Mimosa Injerto CLASICA Dealbata                             | Ornamentales | Acacia dealbata. Nom         |
+| Mimosa Semilla Bayleyana                                    | Ornamentales | Acacia dealbata. Nom         |
+| Mimosa Semilla Espectabilis                                 | Ornamentales | Acacia dealbata. Nom         |
+| Mimosa Semilla Longifolia                                   | Ornamentales | Acacia dealbata. Nom         |
+| Mimosa Semilla Floribunda 4 estaciones                      | Ornamentales | Acacia dealbata. Nom         |
+| Abelia Floribunda                                           | Ornamentales |                              |
+| Callistemom (Mix)                                           | Ornamentales | Limpitatubos. arboli         |
+| Callistemom (Mix)                                           | Ornamentales | Limpitatubos. arboli         |
+| Corylus Avellana "Contorta"                                 | Ornamentales |                              |
+| Escallonia (Mix)                                            | Ornamentales |                              |
+| Evonimus Emerald Gayeti                                     | Ornamentales |                              |
+| Evonimus Pulchellus                                         | Ornamentales |                              |
+| Hibiscus Syriacus  "Helene" -Blanco-C.rojo                  | Ornamentales | Por su capacidad de          |
+| Hibiscus Syriacus "Pink Giant" Rosa                         | Ornamentales | Por su capacidad de          |
+| Lonicera Nitida "Maigrum"                                   | Ornamentales |                              |
+| Prunus pisardii                                             | Ornamentales |                              |
+| Weigelia "Bristol Ruby"                                     | Ornamentales |                              |
+| Leptospermum formado PIRAMIDE                               | Ornamentales |                              |
+| Leptospermum COPA                                           | Ornamentales |                              |
+| Nerium oleander-CALIDAD "GARDEN"                            | Ornamentales |                              |
+| Nerium Oleander Arbusto GRANDE                              | Ornamentales |                              |
+| Nerium oleander COPA  Calibre 6/8                           | Ornamentales |                              |
+| ROSAL TREPADOR                                              | Ornamentales |                              |
+| Camelia Blanco, Chrysler Rojo, Soraya Naranja,              | Ornamentales |                              |
+| Solanum Jazminoide                                          | Ornamentales |                              |
+| Wisteria Sinensis  azul, rosa, blanca                       | Ornamentales |                              |
+| Wisteria Sinensis INJERTADAS DECÇ?                          | Ornamentales |                              |
+| Bougamvillea Sanderiana Tutor                               | Ornamentales |                              |
+| Bougamvillea Sanderiana Espaldera                           | Ornamentales |                              |
+| Bougamvillea Sanderiana Espaldera                           | Ornamentales |                              |
+| Bougamvillea Sanderiana, 3 tut. piramide                    | Ornamentales |                              |
+| Expositor µrboles clima mediterr neo                        | Ornamentales |                              |
+| Expositor µrboles borde del mar                             | Ornamentales |                              |
+| Brachychiton Acerifolius                                    | Ornamentales |                              |
+| Cassia Corimbosa                                            | Ornamentales |                              |
+| Cassia Corimbosa                                            | Ornamentales |                              |
+| Chitalpa Summer Bells                                       | Ornamentales |                              |
+| Erytrina Kafra                                              | Ornamentales |                              |
+| Eucalyptus Citriodora                                       | Ornamentales |                              |
+| Eucalyptus Ficifolia                                        | Ornamentales |                              |
+| Hibiscus Syriacus  Var. Injertadas 1 Tallo                  | Ornamentales |                              |
+| Lagunaria Patersonii                                        | Ornamentales |                              |
+| Lagunaria Patersonii                                        | Ornamentales |                              |
+| Morus Alba                                                  | Ornamentales |                              |
+| Platanus Acerifolia                                         | Ornamentales |                              |
+| Salix Babylonica  Pendula                                   | Ornamentales |                              |
+| Tamarix  Ramosissima Pink Cascade                           | Ornamentales |                              |
+| Tecoma Stands                                               | Ornamentales |                              |
+| Tecoma Stands                                               | Ornamentales |                              |
+| Tipuana Tipu                                                | Ornamentales |                              |
+| Pleioblastus distichus-Bamb£ enano                          | Ornamentales |                              |
+| Sasa palmata                                                | Ornamentales |                              |
+| Phylostachys aurea                                          | Ornamentales |                              |
+| Phylostachys aurea                                          | Ornamentales |                              |
+| Phylostachys Bambusa Spectabilis                            | Ornamentales |                              |
+| Phylostachys biseti                                         | Ornamentales |                              |
+| Pseudosasa japonica (Metake)                                | Ornamentales |                              |
+| Pseudosasa japonica (Metake)                                | Ornamentales |                              |
+| Cedrus Deodara "Feeling Blue" Novedad                       | Ornamentales |                              |
+| Juniperus chinensis "Blue Alps"                             | Ornamentales |                              |
+| Juniperus Chinensis Stricta                                 | Ornamentales |                              |
+| Juniperus squamata "Blue Star"                              | Ornamentales |                              |
+| Juniperus x media Phitzeriana verde                         | Ornamentales |                              |
+| Pinus Halepensis                                            | Ornamentales |                              |
+| Pinus Pinea -Pino Pi¤onero                                  | Ornamentales |                              |
+| Thuja Esmeralda                                             | Ornamentales |                              |
+| Bismarckia Nobilis                                          | Ornamentales |                              |
+| Brahea Armata                                               | Ornamentales |                              |
+| Brahea Edulis                                               | Ornamentales |                              |
+| Butia Capitata                                              | Ornamentales |                              |
+| Butia Capitata                                              | Ornamentales |                              |
+| Butia Capitata                                              | Ornamentales |                              |
+| Chamaerops Humilis                                          | Ornamentales |                              |
+| Chamaerops Humilis                                          | Ornamentales |                              |
+| Chamaerops Humilis "Cerifera"                               | Ornamentales |                              |
+| Chrysalidocarpus Lutescens -ARECA                           | Ornamentales |                              |
+| Cordyline Australis -DRACAENA                               | Ornamentales |                              |
+| Cycas Revoluta                                              | Ornamentales |                              |
+| Cycas Revoluta                                              | Ornamentales |                              |
+| Dracaena Drago                                              | Ornamentales |                              |
+| Dracaena Drago                                              | Ornamentales |                              |
+| Livistonia Decipiens                                        | Ornamentales |                              |
+| Livistonia Decipiens                                        | Ornamentales |                              |
+| Rhaphis Excelsa                                             | Ornamentales |                              |
+| Sabal Minor                                                 | Ornamentales |                              |
+| Sabal Minor                                                 | Ornamentales |                              |
+| Trachycarpus Fortunei                                       | Ornamentales |                              |
+| Washingtonia Robusta                                        | Ornamentales |                              |
+| Zamia Furfuracaea                                           | Ornamentales |                              |
++-------------------------------------------------------------+--------------+------------------------------+
+132 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*12. Get the First name, last name, and zip code of all employees who work at Barcelona.*/
+mysql> select concat_ws(' ', e.nombre, e.apellido1, e.apellido2) as nombre_empleado, o.codigoPostal from empleados e
+    -> left join oficinas o using (codigoOficina)
+    -> where o.ciudad = 'Barcelona';
++--------------------------------+--------------+
+| nombre_empleado                | codigoPostal |
++--------------------------------+--------------+
+| Emmanuel Maga¤a Perez          | 08019        |
+| Jos‚ Manuel Martinez De la Osa | 08019        |
+| David Palma Aceituno           | 08019        |
+| Oscar Palma Aceituno           | 08019        |
++--------------------------------+--------------+
+4 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*13. Get the product code, text description, and the number of times it has been ordered such a product.*/
+mysql> select p.codigoProducto, substr(p.descripcion, 1, 20), sum(dp.cantidad) as veces_pedido from productos p
+    -> left join detallepedidos dp using (codigoProducto)
+    -> group by 1;
++----------------+------------------------------+--------------+
+| codigoProducto | substr(p.descripcion, 1, 20) | veces_pedido |
++----------------+------------------------------+--------------+
+| 11679          | Gracias a la poda se         |           45 |
+| 21636          | Palas de acero con c         |           40 |
+| 22225          | Fabuloso rastillo qu         |           82 |
+| 30310          | Longitud:24cm. Herra         |          220 |
+| AR-001         | Planta arom tica que         |          135 |
+| AR-002         | Espliego de jard¡n,          |          128 |
+| AR-003         | Origanum majorana. N         |           17 |
+| AR-004         | Es una planta perenn         |           30 |
+| AR-005         | ¶¨Qui‚n no conoce la         |           21 |
+| AR-006         | Nombre cient¡fico o          |          291 |
+| AR-007         | La Salvia es un pequ         |            9 |
+| AR-008         | Nombre com£n o vulga         |          455 |
+| AR-009         | Nombre com£n o vulga         |          961 |
+| AR-010         |                              |           10 |
+| FR-1           |                              |           24 |
+| FR-10          | El limonero, pertene         |           17 |
+| FR-100         | Se trata de un  rbol         |          114 |
+| FR-101         |                              |           19 |
+| FR-102         | Existen dos hip¢tesi         |           37 |
+| FR-103         | Existen dos hip¢tesi         |            1 |
+| FR-104         | Existen dos hip¢tesi         |         NULL |
+| FR-105         | Existen dos hip¢tesi         |            4 |
+| FR-106         | µrbol piramidal, red         |           83 |
+| FR-107         | µrbol piramidal, red         |           50 |
+| FR-108         | µrbol piramidal, red         |           18 |
+| FR-11          | El limonero, pertene         |          131 |
+| FR-12          | su nombre cient¡fico         |           32 |
+| FR-13          | su nombre cient¡fico         |           13 |
+| FR-14          | Se trata de un peque         |         NULL |
+| FR-15          | Se trata de un peque         |            9 |
+| FR-16          | Se trata de un peque         |            1 |
+| FR-17          |                              |          423 |
+| FR-18          |                              |           27 |
+| FR-19          |                              |         NULL |
+| FR-2           | El naranjo es un  rb         |            1 |
+| FR-20          |                              |         NULL |
+| FR-21          |                              |         NULL |
+| FR-22          |                              |           10 |
+| FR-23          |                              |            8 |
+| FR-24          |  rbol que puede pasa         |         NULL |
+| FR-25          |  rbol que puede pasa         |         NULL |
+| FR-26          |  rbol que puede pasa         |         NULL |
+| FR-27          | Las principales espe         |         NULL |
+| FR-28          | Las principales espe         |         NULL |
+| FR-29          | Las principales espe         |          120 |
+| FR-3           | El naranjo es un  rb         |           71 |
+| FR-30          |  rbol de tama¤o medi         |         NULL |
+| FR-31          |  rbol de tama¤o medi         |           12 |
+| FR-32          |  rbol de tama¤o medi         |         NULL |
+| FR-33          |  rbol de tama¤o medi         |           27 |
+| FR-34          |  rbol de tama¤o medi         |           42 |
+| FR-35          |  rbol de tama¤o medi         |         NULL |
+| FR-36          | peque¤o  rbol caduci         |           69 |
+| FR-37          | La higuera (Ficus ca         |            5 |
+| FR-38          | La higuera (Ficus ca         |         NULL |
+| FR-39          | La higuera (Ficus ca         |         NULL |
+| FR-4           | El naranjo es un  rb         |           88 |
+| FR-40          | alcanza como m ximo          |           49 |
+| FR-41          | alcanza como m ximo          |           12 |
+| FR-42          | alcanza como m ximo          |           12 |
+| FR-43          |                              |            6 |
+| FR-44          | µrbol caducifolio de         |         NULL |
+| FR-45          | µrbol caducifolio de         |           14 |
+| FR-46          | µrbol caducifolio de         |         NULL |
+| FR-47          | µrbol caducifolio de         |           55 |
+| FR-48          |                              |          120 |
+| FR-49          |                              |         NULL |
+| FR-5           |                              |         NULL |
+| FR-50          | µrbol piramidal, red         |         NULL |
+| FR-51          | µrbol piramidal, red         |         NULL |
+| FR-52          | µrbol piramidal, red         |         NULL |
+| FR-53          | µrbol piramidal, red         |           93 |
+| FR-54          | Aunque originario de         |           39 |
+| FR-55          | Existen dos hip¢tesi         |         NULL |
+| FR-56          |                              |           16 |
+| FR-57          | De crecimiento algo          |          203 |
+| FR-58          |  rbol que puede pasa         |           51 |
+| FR-59          |  rbol que puede pasa         |         NULL |
+| FR-6           |                              |           16 |
+| FR-60          |  rbol que puede pasa         |           11 |
+| FR-61          |  rbol que puede pasa         |         NULL |
+| FR-62          |  rbol que puede pasa         |         NULL |
+| FR-63          | Las principales espe         |         NULL |
+| FR-64          | Las principales espe         |            5 |
+| FR-65          | Las principales espe         |         NULL |
+| FR-66          | Las principales espe         |            5 |
+| FR-67          | Las principales espe         |           25 |
+| FR-68          | Las principales espe         |         NULL |
+| FR-69          | Las principales espe         |           21 |
+| FR-7           |                              |           12 |
+| FR-70          |  rbol de tama¤o medi         |         NULL |
+| FR-71          |  rbol de tama¤o medi         |           10 |
+| FR-72          |  rbol de tama¤o medi         |            4 |
+| FR-73          | peque¤o  rbol caduci         |         NULL |
+| FR-74          | peque¤o  rbol caduci         |         NULL |
+| FR-75          | peque¤o  rbol caduci         |            7 |
+| FR-76          | peque¤o  rbol caduci         |         NULL |
+| FR-77          | peque¤o  rbol caduci         |           15 |
+| FR-78          | La higuera (Ficus ca         |            2 |
+| FR-79          | La higuera (Ficus ca         |           43 |
+| FR-8           | El limonero, pertene         |           18 |
+| FR-80          | La higuera (Ficus ca         |            1 |
+| FR-81          | La higuera (Ficus ca         |            3 |
+| FR-82          | La higuera (Ficus ca         |           14 |
+| FR-83          | La higuera (Ficus ca         |         NULL |
+| FR-84          | De crecimiento algo          |           11 |
+| FR-85          | De crecimiento algo          |           76 |
+| FR-86          | alcanza como m ximo          |            2 |
+| FR-87          | alcanza como m ximo          |           72 |
+| FR-88          | alcanza como m ximo          |         NULL |
+| FR-89          | alcanza como m ximo          |           10 |
+| FR-9           | El limonero, pertene         |            8 |
+| FR-90          | Aunque originario de         |            4 |
+| FR-91          | Aunque originario de         |           30 |
+| FR-92          | µrbol caducifolio de         |         NULL |
+| FR-93          | µrbol caducifolio de         |         NULL |
+| FR-94          | µrbol caducifolio de         |          111 |
+| FR-95          | µrbol caducifolio de         |         NULL |
+| FR-96          | arbolito caducifolio         |         NULL |
+| FR-97          | arbolito caducifolio         |         NULL |
+| FR-98          | arbolito caducifolio         |         NULL |
+| FR-99          | arbolito caducifolio         |         NULL |
+| OR-001         |                              |         NULL |
+| OR-100         | Acacia dealbata. Nom         |         NULL |
+| OR-101         | Acacia dealbata. Nom         |           24 |
+| OR-102         | Acacia dealbata. Nom         |           87 |
+| OR-103         | Acacia dealbata. Nom         |         NULL |
+| OR-104         | Acacia dealbata. Nom         |           20 |
+| OR-105         | Acacia dealbata. Nom         |         NULL |
+| OR-106         | Acacia dealbata. Nom         |         NULL |
+| OR-107         | Acacia dealbata. Nom         |         NULL |
+| OR-108         |                              |         NULL |
+| OR-109         | Limpitatubos. arboli         |         NULL |
+| OR-110         | Limpitatubos. arboli         |         NULL |
+| OR-111         |                              |         NULL |
+| OR-112         |                              |         NULL |
+| OR-113         |                              |         NULL |
+| OR-114         |                              |         NULL |
+| OR-115         |                              |            9 |
+| OR-116         | Por su capacidad de          |           14 |
+| OR-117         | Por su capacidad de          |         NULL |
+| OR-118         | Por su capacidad de          |         NULL |
+| OR-119         |                              |           10 |
+| OR-120         |                              |            5 |
+| OR-121         |                              |         NULL |
+| OR-122         |                              |           32 |
+| OR-123         |                              |           14 |
+| OR-124         |                              |         NULL |
+| OR-125         |                              |            3 |
+| OR-126         |                              |         NULL |
+| OR-127         | Arbusto excepcional          |           40 |
+| OR-128         | Arbusto excepcional          |           29 |
+| OR-129         | Arbusto excepcional          |            3 |
+| OR-130         | Limpitatubos. arboli         |           12 |
+| OR-131         |                              |         NULL |
+| OR-132         |                              |         NULL |
+| OR-133         |                              |         NULL |
+| OR-134         |                              |         NULL |
+| OR-135         |                              |         NULL |
+| OR-136         |                              |          127 |
+| OR-137         |                              |         NULL |
+| OR-138         |                              |         NULL |
+| OR-139         |                              |           80 |
+| OR-140         |                              |           50 |
+| OR-141         |                              |           45 |
+| OR-142         |                              |         NULL |
+| OR-143         |                              |         NULL |
+| OR-144         |                              |         NULL |
+| OR-145         |                              |         NULL |
+| OR-146         |                              |           17 |
+| OR-147         |                              |            6 |
+| OR-148         |                              |         NULL |
+| OR-149         |                              |         NULL |
+| OR-150         |                              |           18 |
+| OR-151         |                              |         NULL |
+| OR-152         |                              |            3 |
+| OR-153         |                              |         NULL |
+| OR-154         |                              |         NULL |
+| OR-155         |                              |            4 |
+| OR-156         |                              |           33 |
+| OR-157         |                              |          262 |
+| OR-158         |                              |         NULL |
+| OR-159         |                              |           22 |
+| OR-160         |                              |           10 |
+| OR-161         |                              |         NULL |
+| OR-162         |                              |         NULL |
+| OR-163         |                              |         NULL |
+| OR-164         |                              |         NULL |
+| OR-165         |                              |            3 |
+| OR-166         |                              |         NULL |
+| OR-167         |                              |         NULL |
+| OR-168         |                              |            2 |
+| OR-169         |                              |         NULL |
+| OR-170         |                              |         NULL |
+| OR-171         |                              |         NULL |
+| OR-172         |                              |           89 |
+| OR-173         |                              |         NULL |
+| OR-174         |                              |           24 |
+| OR-175         |                              |         NULL |
+| OR-176         |                              |           38 |
+| OR-177         |                              |          150 |
+| OR-178         |                              |         NULL |
+| OR-179         |                              |            5 |
+| OR-180         |                              |         NULL |
+| OR-181         |                              |           36 |
+| OR-182         |                              |         NULL |
+| OR-183         |                              |         NULL |
+| OR-184         |                              |         NULL |
+| OR-185         |                              |         NULL |
+| OR-186         |                              |           40 |
+| OR-187         |                              |         NULL |
+| OR-188         |                              |            4 |
+| OR-189         |                              |         NULL |
+| OR-190         |                              |         NULL |
+| OR-191         |                              |         NULL |
+| OR-192         |                              |         NULL |
+| OR-193         |                              |            5 |
+| OR-194         |                              |         NULL |
+| OR-195         |                              |         NULL |
+| OR-196         |                              |           28 |
+| OR-197         |                              |         NULL |
+| OR-198         |                              |         NULL |
+| OR-199         |                              |         NULL |
+| OR-200         |                              |           10 |
+| OR-201         |                              |         NULL |
+| OR-202         |                              |         NULL |
+| OR-203         |                              |           10 |
+| OR-204         |                              |         NULL |
+| OR-205         |                              |         NULL |
+| OR-206         |                              |         NULL |
+| OR-207         |                              |            4 |
+| OR-208         |                              |          221 |
+| OR-209         |                              |           50 |
+| OR-210         |                              |           80 |
+| OR-211         |                              |           70 |
+| OR-212         |                              |         NULL |
+| OR-213         |                              |           35 |
+| OR-214         |                              |          212 |
+| OR-215         |                              |         NULL |
+| OR-216         |                              |         NULL |
+| OR-217         |                              |           15 |
+| OR-218         |                              |           38 |
+| OR-219         |                              |         NULL |
+| OR-220         |                              |         NULL |
+| OR-221         |                              |         NULL |
+| OR-222         |                              |           21 |
+| OR-223         |                              |         NULL |
+| OR-224         |                              |         NULL |
+| OR-225         |                              |           84 |
+| OR-226         |                              |           15 |
+| OR-227         |                              |          236 |
+| OR-228         |                              |         NULL |
+| OR-229         |                              |         NULL |
+| OR-230         |                              |         NULL |
+| OR-231         |                              |         NULL |
+| OR-232         |                              |         NULL |
+| OR-233         |                              |         NULL |
+| OR-234         |                              |           55 |
+| OR-235         |                              |         NULL |
+| OR-236         |                              |           45 |
+| OR-237         |                              |           50 |
+| OR-238         |                              |         NULL |
+| OR-239         |                              |         NULL |
+| OR-240         |                              |           78 |
+| OR-241         |                              |           25 |
+| OR-242         |                              |         NULL |
+| OR-243         |                              |            2 |
+| OR-244         |                              |         NULL |
+| OR-245         |                              |         NULL |
+| OR-246         |                              |         NULL |
+| OR-247         |                              |          279 |
+| OR-248         |                              |         NULL |
+| OR-249         |                              |           30 |
+| OR-250         |                              |            3 |
+| OR-251         |                              |         NULL |
+| OR-99          | Acacia dealbata. Nom         |           38 |
++----------------+------------------------------+--------------+
+276 rows in set (0.00 sec)
+
+mysql> 
+mysql> /*14. Get the name of customers in the city of Madrid who have placed an order, and the status of the order.*/
+mysql> select c.nombreCliente as clientes_de_Madrid, p.codigoPedido, p.estado 
+    -> from clientes c 
+    -> join pedidos p 
+    -> using (codigoCliente)
+    -> where c.ciudad = 'Madrid'
+    -> group by 1,2;
++--------------------------------+--------------+-----------+
+| clientes_de_Madrid             | codigoPedido | estado    |
++--------------------------------+--------------+-----------+
+| Beragua                        |           13 | Entregado |
+| Beragua                        |           14 | Rechazado |
+| Beragua                        |           15 | Entregado |
+| Beragua                        |           16 | Entregado |
+| Beragua                        |           17 | Entregado |
+| Naturagua                      |           18 | Entregado |
+| Naturagua                      |           19 | Pendiente |
+| Naturagua                      |           20 | Pendiente |
+| Naturagua                      |           21 | Rechazado |
+| Naturagua                      |           22 | Entregado |
+| Dardena S.A.                   |           24 | Entregado |
+| Dardena S.A.                   |           29 | Rechazado |
+| Dardena S.A.                   |           36 | Entregado |
+| Dardena S.A.                   |           54 | Pendiente |
+| Dardena S.A.                   |           55 | Entregado |
+| Jardin de Flores               |           74 | Rechazado |
+| Jardin de Flores               |           75 | Entregado |
+| Jardin de Flores               |           76 | Entregado |
+| Jardin de Flores               |           77 | Pendiente |
+| Jardin de Flores               |           78 | Entregado |
+| Jardines y Mansiones CACTUS SL |           48 | Entregado |
+| Jardines y Mansiones CACTUS SL |           50 | Pendiente |
+| Jardines y Mansiones CACTUS SL |           51 | Entregado |
+| Jardines y Mansiones CACTUS SL |           52 | Pendiente |
+| Jardiner¡as Mat¡as SL          |           90 | Pendiente |
+| Jardiner¡as Mat¡as SL          |           91 | Entregado |
+| Jardiner¡as Mat¡as SL          |           92 | Entregado |
+| Jardiner¡as Mat¡as SL          |           93 | Entregado |
+| Jardiner¡as Mat¡as SL          |           94 | Pendiente |
+| FLORES S.L.                    |          111 | Entregado |
+| FLORES S.L.                    |          112 | Pendiente |
+| FLORES S.L.                    |          113 | Rechazado |
+| FLORES S.L.                    |          114 | Entregado |
+| FLORES S.L.                    |          115 | Pendiente |
++--------------------------------+--------------+-----------+
+34 rows in set (0.00 sec)
+
+mysql> notee
